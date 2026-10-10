@@ -3,8 +3,9 @@
     <string name="title">遊戲 SDK 獨立接入 Demo</string>
     <string name="user_id_hint">直播用戶 UID</string>
     <string name="token_hint">直播 Token</string>
+    <string name="scene_type_hint">場景類型：1 直播間，2 IM 群</string>
     <string name="scene_id_hint">場景 ID</string>
     <string name="open_game">開啟遊戲</string>
-    <string name="invalid_input">請輸入有效的 UID、Token 和場景 ID</string>
+    <string name="invalid_input">請輸入有效的 UID、Token、場景類型和場景 ID</string>
     <string name="session_invalid">會話已失效：%1$s</string>
 </resources>

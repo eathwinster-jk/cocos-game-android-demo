@@ -3,8 +3,9 @@
     <string name="title">Game SDK Consumer Demo</string>
     <string name="user_id_hint">Live User ID</string>
     <string name="token_hint">Live Token</string>
+    <string name="scene_type_hint">Scene Type: 1 Live Room, 2 IM Group</string>
     <string name="scene_id_hint">Scene ID</string>
     <string name="open_game">Open Game</string>
-    <string name="invalid_input">Please enter a valid UID, Token and Scene ID</string>
+    <string name="invalid_input">Please enter a valid UID, Token, Scene Type and Scene ID</string>
     <string name="session_invalid">Session invalid: %1$s</string>
 </resources>

@@ -21,6 +21,7 @@ public final class MainActivity extends Activity {
     private static final String LOG_TAG = "GameSdkConsumerDemo";
     private EditText userIdInput;
     private EditText tokenInput;
+    private EditText sceneTypeInput;
     private EditText sceneIdInput;
 
     /** 初始化 SDK 和测试输入页。 */
@@ -44,10 +45,11 @@ public final class MainActivity extends Activity {
         root.addView(title, createItemParams(dp(64)));
         userIdInput = createInput(R.string.user_id_hint, InputType.TYPE_CLASS_NUMBER);
         tokenInput = createInput(R.string.token_hint, InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        sceneTypeInput = createInput(R.string.scene_type_hint, InputType.TYPE_CLASS_NUMBER);
         sceneIdInput = createInput(R.string.scene_id_hint, InputType.TYPE_CLASS_TEXT);
-        sceneIdInput.setText("0999000015");
         root.addView(userIdInput, createItemParams(dp(56)));
         root.addView(tokenInput, createItemParams(dp(56)));
+        root.addView(sceneTypeInput, createItemParams(dp(56)));
         root.addView(sceneIdInput, createItemParams(dp(56)));
         Button openButton = new Button(this);
         openButton.setText(R.string.open_game);
@@ -71,13 +73,14 @@ public final class MainActivity extends Activity {
         try {
             long liveUserId = Long.parseLong(userIdInput.getText().toString().trim());
             String liveToken = tokenInput.getText().toString().trim();
+            int sceneType = Integer.parseInt(sceneTypeInput.getText().toString().trim());
             String sceneId = sceneIdInput.getText().toString().trim();
             GameSessionConfig session = new GameSessionConfig(
                 BuildConfig.GAME_WS_URL,
                 BuildConfig.GAME_API_URL,
                 liveUserId,
                 liveToken,
-                2,
+                sceneType,
                 sceneId,
                 0,
                 BuildConfig.VERSION_NAME,

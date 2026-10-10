@@ -14,7 +14,11 @@ dependencies {
 }
 ```
 
-运行后由宿主输入 UID、Token 和场景 ID，再通过 `GameSessionConfig` 打开游戏。
+运行后由宿主输入 UID、Token、场景类型和场景 ID，再通过 `GameSessionConfig` 打开游戏。
+
+- 场景类型 `1`：直播间。
+- 场景类型 `2`：IM 群。
+- 场景 ID 不预设固定值，由接入客户端传入。
 
 构建：
 
