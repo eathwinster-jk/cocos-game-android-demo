@@ -63,6 +63,8 @@ public final class MainActivity extends Activity {
         tokenInput = createInput(R.string.token_hint, InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         sceneTypeInput = createInput(R.string.scene_type_hint, InputType.TYPE_CLASS_NUMBER);
         sceneIdInput = createInput(R.string.scene_id_hint, InputType.TYPE_CLASS_TEXT);
+        sceneTypeInput.setText("2");
+        sceneIdInput.setText("0999000015");
         root.addView(accountInput, createItemParams(dp(56)));
         root.addView(passwordInput, createItemParams(dp(56)));
         root.addView(sceneTypeInput, createItemParams(dp(56)));
