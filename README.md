@@ -187,9 +187,31 @@ SDK AAR 会合并：
 </application>
 ```
 
+### 4.1 权限
+
+SDK AAR 已声明：
+
+```xml
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+<uses-permission android:name="android.permission.VIBRATE"/>
+```
+
+宿主不需要重复声明。通知、相机、麦克风和存储权限不是当前游戏 SDK 的必需权限。
+
+### 4.2 混淆配置
+
+AAR 已携带 Consumer ProGuard。宿主有额外收缩规则时，建议确认以下配置：
+
+```proguard
+-keep class com.eath.cocosgamesdk.** { *; }
+-keep class com.cocos.lib.** { *; }
+-dontwarn com.cocos.lib.**
+```
+
 ## 5. 初始化 SDK
 
-建议在 Application 初始化。
+建议在主进程的 Application 中初始化，且只初始化一次。必须在调用其他 SDK 接口前完成。
 
 ### 5.1 Java
 

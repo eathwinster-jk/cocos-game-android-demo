@@ -1,11 +1,17 @@
 <resources>
     <string name="app_name">Game SDK Demo</string>
     <string name="title">Game SDK Consumer Demo</string>
+    <string name="account_hint">Account</string>
+    <string name="password_hint">Password</string>
     <string name="user_id_hint">Live User ID</string>
     <string name="token_hint">Live Token</string>
     <string name="scene_type_hint">Scene Type: 1 Live Room, 2 IM Group</string>
     <string name="scene_id_hint">Scene ID</string>
     <string name="open_game">Open Game</string>
+    <string name="account_login">Login with Account and Open Game</string>
+    <string name="open_with_token">Open with UID and Token</string>
+    <string name="invalid_account">Please enter account and password</string>
+    <string name="login_network_error">Login service is unavailable</string>
     <string name="invalid_input">Please enter a valid UID, Token, Scene Type and Scene ID</string>
     <string name="session_invalid">Session invalid: %1$s</string>
 </resources>

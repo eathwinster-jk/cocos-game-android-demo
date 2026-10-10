@@ -14,6 +14,12 @@ android {
         versionName = "0.1.0"
         buildConfigField("String", "GAME_WS_URL", "\"wss://test.imnono.net/game-ws/ws\"")
         buildConfigField("String", "GAME_API_URL", "\"https://test.imnono.net/game-lobby\"")
+        buildConfigField("String", "LOGIN_API_URL", "\"https://test2.kzb001.net/prod-api/login\"")
+        buildConfigField("int", "LOGIN_PID", "4")
+        buildConfigField("String", "LOGIN_VERSION", "\"1.120\"")
+        buildConfigField("String", "LOGIN_USER_AGENT", "\"cocos-game-sdk-demo/1.120\"")
+        buildConfigField("int", "LOGIN_APP_TYPE", "1")
+        buildConfigField("String", "LOGIN_COUNTRY_CODE", "\"86\"")
     }
 
     buildFeatures {
