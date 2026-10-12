@@ -2,7 +2,7 @@
 
 ## 1. SDK 信息
 
-- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.1.0`
+- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.1.1`
 - SDK 仓库：https://github.com/eathwinster-jk/cocos-game-android-sdk
 - 当前模块：`niuniu`
 - ABI：`arm64-v8a`
@@ -29,13 +29,13 @@ SDK 不负责生产登录，也不内置固定 UID、Token 或 Scene ID。
 从 SDK 仓库下载：
 
 ```text
-repository/com/eath/cocosgamesdk/game-sdk/0.1.0/game-sdk-0.1.0.aar
+repository/com/eath/cocosgamesdk/game-sdk/0.1.1/game-sdk-0.1.1.aar
 ```
 
 复制到宿主：
 
 ```text
-app/libs/game-sdk-0.1.0.aar
+app/libs/game-sdk-0.1.1.aar
 ```
 
 ### 2.2 Groovy 配置
@@ -67,7 +67,7 @@ android {
 }
 
 dependencies {
-    implementation files("libs/game-sdk-0.1.0.aar")
+    implementation files("libs/game-sdk-0.1.1.aar")
 }
 ```
 
@@ -100,7 +100,7 @@ android {
 }
 
 dependencies {
-    implementation(files("libs/game-sdk-0.1.0.aar"))
+    implementation(files("libs/game-sdk-0.1.1.aar"))
 }
 ```
 
@@ -129,7 +129,7 @@ dependencyResolutionManagement {
 
 ```groovy
 dependencies {
-    implementation "com.eath.cocosgamesdk:game-sdk:0.1.0"
+    implementation "com.eath.cocosgamesdk:game-sdk:0.1.1"
 }
 ```
 
@@ -154,7 +154,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("com.eath.cocosgamesdk:game-sdk:0.1.0")
+    implementation("com.eath.cocosgamesdk:game-sdk:0.1.1")
 }
 ```
 
