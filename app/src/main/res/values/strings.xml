@@ -4,6 +4,7 @@
     <string name="account_hint">Account</string>
     <string name="password_hint">Password</string>
     <string name="user_id_hint">Live User ID</string>
+    <string name="im_user_id_hint">IM User ID</string>
     <string name="token_hint">Live Token</string>
     <string name="scene_type_hint">Scene Type: 1 Live Room, 2 IM Group</string>
     <string name="scene_id_hint">Scene ID</string>

@@ -56,9 +56,11 @@ final class AccountLoginClient {
         if (statusCode < 200 || statusCode >= 300) return LoginResult.failure(message);
         if (!"0".equals(response.optString("code", "-1"))) return LoginResult.failure(message);
         long userId = parseUserId(response.optString("uid", "0"));
+        JSONObject userInfo = response.optJSONObject("userinfo");
+        long imUserId = parseUserId(userInfo == null ? "0" : userInfo.optString("imUserId", "0"));
         String token = response.optString("token", "");
-        if (userId <= 0 || token.isEmpty()) return LoginResult.failure("登录响应缺少 UID 或 Token");
-        return LoginResult.success(userId, token);
+        if (userId <= 0 || imUserId <= 0 || token.isEmpty()) return LoginResult.failure("登录响应缺少 UID、IM UID 或 Token");
+        return LoginResult.success(userId, imUserId, token);
     }
 
     /**
@@ -79,26 +81,28 @@ final class AccountLoginClient {
         private final boolean isSuccessful;
         private final String message;
         private final long userId;
+        private final long imUserId;
         private final String token;
 
         /**
          * 创建登录结果。
          */
-        private LoginResult(boolean isSuccessful, String message, long userId, String token) {
+        private LoginResult(boolean isSuccessful, String message, long userId, long imUserId, String token) {
             this.isSuccessful = isSuccessful;
             this.message = message;
             this.userId = userId;
+            this.imUserId = imUserId;
             this.token = token;
         }
 
         /** 创建成功结果。 */
-        static LoginResult success(long userId, String token) {
-            return new LoginResult(true, "", userId, token);
+        static LoginResult success(long userId, long imUserId, String token) {
+            return new LoginResult(true, "", userId, imUserId, token);
         }
 
         /** 创建失败结果。 */
         static LoginResult failure(String message) {
-            return new LoginResult(false, message, 0L, "");
+            return new LoginResult(false, message, 0L, 0L, "");
         }
 
         /** 返回是否成功。 */
@@ -109,6 +113,9 @@ final class AccountLoginClient {
 
         /** 返回直播用户 ID。 */
         long getUserId() { return userId; }
+
+        /** 返回 IM 用户 ID。 */
+        long getImUserId() { return imUserId; }
 
         /** 返回直播 Token。 */
         String getToken() { return token; }

@@ -32,6 +32,7 @@ public final class MainActivity extends Activity {
     private EditText accountInput;
     private EditText passwordInput;
     private EditText userIdInput;
+    private EditText imUserIdInput;
     private EditText tokenInput;
     private EditText sceneTypeInput;
     private EditText sceneIdInput;
@@ -60,6 +61,7 @@ public final class MainActivity extends Activity {
             R.string.password_hint,
             InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         userIdInput = createInput(R.string.user_id_hint, InputType.TYPE_CLASS_NUMBER);
+        imUserIdInput = createInput(R.string.im_user_id_hint, InputType.TYPE_CLASS_NUMBER);
         tokenInput = createInput(R.string.token_hint, InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         sceneTypeInput = createInput(R.string.scene_type_hint, InputType.TYPE_CLASS_NUMBER);
         sceneIdInput = createInput(R.string.scene_id_hint, InputType.TYPE_CLASS_TEXT);
@@ -75,6 +77,7 @@ public final class MainActivity extends Activity {
         accountLoginButton.setOnClickListener(view -> handleAccountLogin());
         root.addView(accountLoginButton, createItemParams(dp(56)));
         root.addView(userIdInput, createItemParams(dp(56)));
+        root.addView(imUserIdInput, createItemParams(dp(56)));
         root.addView(tokenInput, createItemParams(dp(56)));
         Button openButton = new Button(this);
         openButton.setText(R.string.open_with_token);
@@ -97,8 +100,9 @@ public final class MainActivity extends Activity {
     private void openGame() {
         try {
             long liveUserId = Long.parseLong(userIdInput.getText().toString().trim());
+            long imUserId = Long.parseLong(imUserIdInput.getText().toString().trim());
             String liveToken = tokenInput.getText().toString().trim();
-            openGameWithSession(liveUserId, liveToken);
+            openGameWithSession(liveUserId, imUserId, liveToken);
         } catch (IllegalArgumentException error) {
             Log.e(LOG_TAG, "游戏参数校验失败", error);
             Toast.makeText(this, R.string.invalid_input, Toast.LENGTH_LONG).show();
@@ -136,7 +140,7 @@ public final class MainActivity extends Activity {
             return;
         }
         try {
-            openGameWithSession(result.getUserId(), result.getToken());
+            openGameWithSession(result.getUserId(), result.getImUserId(), result.getToken());
         } catch (IllegalArgumentException error) {
             Log.e(LOG_TAG, "场景参数校验失败", error);
             Toast.makeText(this, R.string.invalid_input, Toast.LENGTH_LONG).show();
@@ -146,13 +150,14 @@ public final class MainActivity extends Activity {
     /**
      * 使用客户端会话和动态场景参数打开游戏。
      */
-    private void openGameWithSession(long liveUserId, String liveToken) {
+    private void openGameWithSession(long liveUserId, long imUserId, String liveToken) {
         int sceneType = Integer.parseInt(sceneTypeInput.getText().toString().trim());
         String sceneId = sceneIdInput.getText().toString().trim();
         GameSessionConfig session = new GameSessionConfig(
             BuildConfig.GAME_WS_URL,
             BuildConfig.GAME_API_URL,
             liveUserId,
+            imUserId,
             liveToken,
             sceneType,
             sceneId,

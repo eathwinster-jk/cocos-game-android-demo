@@ -4,6 +4,7 @@
     <string name="account_hint">帳號</string>
     <string name="password_hint">密碼</string>
     <string name="user_id_hint">直播用戶 UID</string>
+    <string name="im_user_id_hint">IM 用戶 UID</string>
     <string name="token_hint">直播 Token</string>
     <string name="scene_type_hint">場景類型：1 直播間，2 IM 群</string>
     <string name="scene_id_hint">場景 ID</string>

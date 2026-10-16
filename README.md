@@ -2,7 +2,7 @@
 
 ## 1. SDK 信息
 
-- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.1.2`
+- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.1.3`
 - SDK 仓库：https://github.com/eathwinster-jk/cocos-game-android-sdk
 - 当前模块：`niuniu`
 - ABI：`arm64-v8a`
@@ -14,6 +14,7 @@
 宿主客户端必须提供：
 
 - `liveUserId`
+- `imUserId`
 - `liveToken`
 - `sceneType`
 - `sceneId`
@@ -29,13 +30,13 @@ SDK 不负责生产登录，也不内置固定 UID、Token 或 Scene ID。
 从 SDK 仓库下载：
 
 ```text
-repository/com/eath/cocosgamesdk/game-sdk/0.1.2/game-sdk-0.1.2.aar
+repository/com/eath/cocosgamesdk/game-sdk/0.1.3/game-sdk-0.1.3.aar
 ```
 
 复制到宿主：
 
 ```text
-app/libs/game-sdk-0.1.2.aar
+app/libs/game-sdk-0.1.3.aar
 ```
 
 ### 2.2 Groovy 配置
@@ -67,7 +68,7 @@ android {
 }
 
 dependencies {
-    implementation files("libs/game-sdk-0.1.2.aar")
+    implementation files("libs/game-sdk-0.1.3.aar")
 }
 ```
 
@@ -100,7 +101,7 @@ android {
 }
 
 dependencies {
-    implementation(files("libs/game-sdk-0.1.2.aar"))
+    implementation(files("libs/game-sdk-0.1.3.aar"))
 }
 ```
 
@@ -129,7 +130,7 @@ dependencyResolutionManagement {
 
 ```groovy
 dependencies {
-    implementation "com.eath.cocosgamesdk:game-sdk:0.1.2"
+    implementation "com.eath.cocosgamesdk:game-sdk:0.1.3"
 }
 ```
 
@@ -154,7 +155,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("com.eath.cocosgamesdk:game-sdk:0.1.2")
+    implementation("com.eath.cocosgamesdk:game-sdk:0.1.3")
 }
 ```
 
@@ -243,7 +244,8 @@ class App : Application() {
 客户端登录成功后自行准备：
 
 ```text
-liveUserId：直播用户 UID
+liveUserId：直播用户 UID（登录响应 uid，用于大厅鉴权）
+imUserId：IM 用户 UID（登录响应 userinfo.imUserId，用于识别本人座位）
 liveToken：当前有效 Token
 sceneType：1 直播间，2 IM 群
 sceneId：当前直播间或群编号
@@ -257,6 +259,7 @@ tableId：可选，0 表示自动选择
 ```java
 private void openGame(
     long liveUserId,
+    long imUserId,
     String liveToken,
     int sceneType,
     String sceneId) {
@@ -264,6 +267,7 @@ private void openGame(
         "wss://test.imnono.net/game-ws/ws",
         "https://test.imnono.net/game-lobby",
         liveUserId,
+        imUserId,
         liveToken,
         sceneType,
         sceneId,
@@ -285,6 +289,7 @@ private void openGame(
 ```kotlin
 private fun openGame(
     liveUserId: Long,
+    imUserId: Long,
     liveToken: String,
     sceneType: Int,
     sceneId: String,
@@ -293,6 +298,7 @@ private fun openGame(
         "wss://test.imnono.net/game-ws/ws",
         "https://test.imnono.net/game-lobby",
         liveUserId,
+        imUserId,
         liveToken,
         sceneType,
         sceneId,
