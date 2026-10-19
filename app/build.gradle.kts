@@ -10,8 +10,8 @@ android {
         applicationId = "com.eath.cocosgamedemo"
         minSdk = 26
         targetSdk = 34
-        versionCode = 4
-        versionName = "0.1.3"
+        versionCode = 5
+        versionName = "0.1.5"
         buildConfigField("String", "GAME_WS_URL", "\"wss://test.imnono.net/game-ws/ws\"")
         buildConfigField("String", "GAME_API_URL", "\"https://test.imnono.net/game-lobby\"")
         buildConfigField("String", "LOGIN_API_URL", "\"https://test2.kzb001.net/prod-api/login\"")
@@ -40,7 +40,7 @@ android {
 
 dependencies {
     val gameSdkVersion = providers.gradleProperty("gameSdkVersion")
-        .orElse("0.1.3")
+        .orElse("0.1.5")
         .get()
     implementation("com.eath.cocosgamesdk:game-sdk:$gameSdkVersion")
 }
