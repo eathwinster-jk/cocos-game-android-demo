@@ -15,4 +15,9 @@
     <string name="login_network_error">Login service is unavailable</string>
     <string name="invalid_input">Please enter a valid UID, Token, Scene Type and Scene ID</string>
     <string name="session_invalid">Session invalid: %1$s</string>
+    <string name="demo_bottom_match">NiuNiu    Host Lao Jin    108    Full time 90+</string>
+    <string name="demo_bottom_tabs">Chat    Live    Stats    Odds    Tips</string>
+    <string name="demo_bottom_message_1">Dali: Is that real?</string>
+    <string name="demo_bottom_message_2">Stars: Last-minute corner winner!</string>
+    <string name="demo_bottom_message_3">Zhuge: So exciting!</string>
 </resources>

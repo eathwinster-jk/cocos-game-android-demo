@@ -2,7 +2,7 @@
 
 ## 1. SDK 信息
 
-- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.1.9`
+- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.1.10`
 - SDK 仓库：https://github.com/eathwinster-jk/cocos-game-android-sdk
 - 当前模块：`niuniu`
 - ABI：`arm64-v8a`
@@ -30,13 +30,13 @@ SDK 不负责生产登录，也不内置固定 UID、Token 或 Scene ID。
 从 SDK 仓库下载：
 
 ```text
-repository/com/eath/cocosgamesdk/game-sdk/0.1.9/game-sdk-0.1.9.aar
+repository/com/eath/cocosgamesdk/game-sdk/0.1.10/game-sdk-0.1.10.aar
 ```
 
 复制到宿主：
 
 ```text
-app/libs/game-sdk-0.1.9.aar
+app/libs/game-sdk-0.1.10.aar
 ```
 
 ### 2.2 Groovy 配置
@@ -68,7 +68,7 @@ android {
 }
 
 dependencies {
-    implementation files("libs/game-sdk-0.1.9.aar")
+    implementation files("libs/game-sdk-0.1.10.aar")
 }
 ```
 
@@ -101,7 +101,7 @@ android {
 }
 
 dependencies {
-    implementation(files("libs/game-sdk-0.1.9.aar"))
+    implementation(files("libs/game-sdk-0.1.10.aar"))
 }
 ```
 
@@ -130,7 +130,7 @@ dependencyResolutionManagement {
 
 ```groovy
 dependencies {
-    implementation "com.eath.cocosgamesdk:game-sdk:0.1.9"
+    implementation "com.eath.cocosgamesdk:game-sdk:0.1.10"
 }
 ```
 
@@ -155,7 +155,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("com.eath.cocosgamesdk:game-sdk:0.1.9")
+    implementation("com.eath.cocosgamesdk:game-sdk:0.1.10")
 }
 ```
 
@@ -440,7 +440,36 @@ CocosGameSDK.getInstance().sendGameEvent(
 
 载荷必须是 JSON 对象。
 
-## 12. 运行独立 Demo
+## 12. 自定义游戏下方内容
+
+竖屏时游戏画面下方依次是加注筹码卡片和宿主内容区，宿主内容（如直播、聊天）通过 `GameBottomContentProvider` 提供；全屏时自动隐藏，退出全屏恢复。未设置时内容区为空白。
+
+在 `openGame` 之前设置：
+
+### 12.1 Java
+
+```java
+CocosGameSDK.getInstance().setBottomContentProvider((activity, gameId) -> {
+    // 返回 null 表示不显示
+    return createHostBottomView(activity);
+});
+```
+
+### 12.2 Kotlin
+
+```kotlin
+CocosGameSDK.getInstance().setBottomContentProvider { activity, gameId ->
+    createHostBottomView(activity)
+}
+```
+
+注意：
+
+- 每次打开游戏页都会调用一次，返回新的 View
+- 不要持有传入的 `Activity`，游戏页关闭后即失效
+- 示例实现见 `app/src/main/java/com/eath/cocosgamedemo/DemoBottomContentProvider.java`
+
+## 13. 运行独立 Demo
 
 ```shell
 git clone https://github.com/eathwinster-jk/cocos-game-android-demo.git
@@ -465,9 +494,9 @@ APK：
 app/build/outputs/apk/debug/app-debug.apk
 ```
 
-## 13. 常见问题
+## 14. 常见问题
 
-### 13.1 Gradle 无法下载 SDK
+### 14.1 Gradle 无法下载 SDK
 
 检查是否能访问：
 
@@ -481,23 +510,23 @@ https://raw.githubusercontent.com
 ./gradlew --refresh-dependencies :app:assembleDebug
 ```
 
-### 13.2 x86 模拟器无法运行
+### 14.2 x86 模拟器无法运行
 
 当前 SDK 只包含 `arm64-v8a`。使用 ARM 模拟器或 ARM64 真机。
 
-### 13.3 sessionConfig 不能为空
+### 14.3 sessionConfig 不能为空
 
 UID、Token、Scene Type、Scene ID 必须由客户端登录和当前业务场景提供。
 
-### 13.4 WebSocket 认证失败
+### 14.4 WebSocket 认证失败
 
 检查 UID 与 Token 是否匹配、是否过期，以及 HTTP/WS 是否属于同一环境。
 
-### 13.5 场景没有牛牛桌
+### 14.5 场景没有牛牛桌
 
 检查 Scene Type、Scene ID，以及后台是否已在该场景开设牛牛桌。
 
-## 14. 安全注意事项
+## 15. 安全注意事项
 
 - 不要将 UID、Token、账号密码提交到 Git。
 - 不要在日志中打印 Token。

@@ -15,4 +15,9 @@
     <string name="login_network_error">登录服务暂时无法访问</string>
     <string name="invalid_input">请输入有效的 UID、Token、场景类型和场景 ID</string>
     <string name="session_invalid">会话已失效：%1$s</string>
+    <string name="demo_bottom_match">牛牛游戏　老金　108　　完场 90+</string>
+    <string name="demo_bottom_tabs">聊天　　直播　　数据　　指数　　预测</string>
+    <string name="demo_bottom_message_1">大力出奇迹：真假 是不是啊</string>
+    <string name="demo_bottom_message_2">众位球星：楼上角球绝杀，这场进球绝杀</string>
+    <string name="demo_bottom_message_3">球界诸葛：太刺激了</string>
 </resources>

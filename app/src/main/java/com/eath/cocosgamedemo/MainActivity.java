@@ -44,6 +44,7 @@ public final class MainActivity extends Activity {
         CocosGameSDK.getInstance().initialize(this);
         CocosGameSDK.getInstance().setHostListener((gameId, event, payloadJson) ->
             Log.i(LOG_TAG, "gameId=" + gameId + ", event=" + event + ", payload=" + payloadJson));
+        CocosGameSDK.getInstance().setBottomContentProvider(new DemoBottomContentProvider());
         setContentView(createContentView());
     }
 

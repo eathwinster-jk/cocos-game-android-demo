@@ -15,4 +15,9 @@
     <string name="login_network_error">登入服務暫時無法存取</string>
     <string name="invalid_input">請輸入有效的 UID、Token、場景類型和場景 ID</string>
     <string name="session_invalid">會話已失效：%1$s</string>
+    <string name="demo_bottom_match">牛牛遊戲　老金　108　　完場 90+</string>
+    <string name="demo_bottom_tabs">聊天　　直播　　數據　　指數　　預測</string>
+    <string name="demo_bottom_message_1">大力出奇蹟：真假 是不是啊</string>
+    <string name="demo_bottom_message_2">眾位球星：樓上角球絕殺，這場進球絕殺</string>
+    <string name="demo_bottom_message_3">球界諸葛：太刺激了</string>
 </resources>
