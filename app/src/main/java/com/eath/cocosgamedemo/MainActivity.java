@@ -8,6 +8,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.eath.cocosgamesdk.CocosGameActivity;
 import com.eath.cocosgamesdk.CocosGameSDK;
+import com.eath.cocosgamesdk.GameHostListener;
 import com.eath.cocosgamesdk.GameSessionConfig;
 
 import org.json.JSONException;
@@ -36,14 +38,15 @@ public final class MainActivity extends Activity {
     private EditText tokenInput;
     private EditText sceneTypeInput;
     private EditText sceneIdInput;
+    private CheckBox embedModeCheckBox;
+    private final GameHostListener hostListener = (gameId, event, payloadJson) ->
+        Log.i(LOG_TAG, "gameId=" + gameId + ", event=" + event + ", payload=" + payloadJson);
 
     /** 初始化 SDK 和测试输入页。 */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CocosGameSDK.getInstance().initialize(this);
-        CocosGameSDK.getInstance().setHostListener((gameId, event, payloadJson) ->
-            Log.i(LOG_TAG, "gameId=" + gameId + ", event=" + event + ", payload=" + payloadJson));
         CocosGameSDK.getInstance().setBottomContentProvider(new DemoBottomContentProvider());
         setContentView(createContentView());
     }
@@ -72,6 +75,9 @@ public final class MainActivity extends Activity {
         root.addView(passwordInput, createItemParams(dp(56)));
         root.addView(sceneTypeInput, createItemParams(dp(56)));
         root.addView(sceneIdInput, createItemParams(dp(56)));
+        embedModeCheckBox = new CheckBox(this);
+        embedModeCheckBox.setText(R.string.embed_mode);
+        root.addView(embedModeCheckBox, createItemParams(dp(48)));
         Button accountLoginButton = new Button(this);
         accountLoginButton.setText(R.string.account_login);
         accountLoginButton.setAllCaps(false);
@@ -165,7 +171,18 @@ public final class MainActivity extends Activity {
             0,
             BuildConfig.VERSION_NAME,
             "Android");
+        if (embedModeCheckBox.isChecked()) {
+            startActivity(DemoEmbedActivity.createIntent(this, session));
+            return;
+        }
         CocosGameSDK.getInstance().openGame(this, "niuniu", session);
+    }
+
+    /** 回到本页时恢复监听；嵌入页关闭时会注销它自己的监听。 */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CocosGameSDK.getInstance().setHostListener(hostListener);
     }
 
     /** 处理游戏会话失效返回。 */

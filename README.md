@@ -2,7 +2,7 @@
 
 ## 1. SDK 信息
 
-- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.1.11`
+- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.2.0`
 - SDK 仓库：https://github.com/eathwinster-jk/cocos-game-android-sdk
 - 当前模块：`niuniu`
 - ABI：`arm64-v8a`
@@ -30,13 +30,13 @@ SDK 不负责生产登录，也不内置固定 UID、Token 或 Scene ID。
 从 SDK 仓库下载：
 
 ```text
-repository/com/eath/cocosgamesdk/game-sdk/0.1.11/game-sdk-0.1.11.aar
+repository/com/eath/cocosgamesdk/game-sdk/0.2.0/game-sdk-0.2.0.aar
 ```
 
 复制到宿主：
 
 ```text
-app/libs/game-sdk-0.1.11.aar
+app/libs/game-sdk-0.2.0.aar
 ```
 
 ### 2.2 Groovy 配置
@@ -68,7 +68,7 @@ android {
 }
 
 dependencies {
-    implementation files("libs/game-sdk-0.1.11.aar")
+    implementation files("libs/game-sdk-0.2.0.aar")
 }
 ```
 
@@ -101,7 +101,7 @@ android {
 }
 
 dependencies {
-    implementation(files("libs/game-sdk-0.1.11.aar"))
+    implementation(files("libs/game-sdk-0.2.0.aar"))
 }
 ```
 
@@ -130,7 +130,7 @@ dependencyResolutionManagement {
 
 ```groovy
 dependencies {
-    implementation "com.eath.cocosgamesdk:game-sdk:0.1.11"
+    implementation "com.eath.cocosgamesdk:game-sdk:0.2.0"
 }
 ```
 
@@ -155,7 +155,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("com.eath.cocosgamesdk:game-sdk:0.1.11")
+    implementation("com.eath.cocosgamesdk:game-sdk:0.2.0")
 }
 ```
 
@@ -504,7 +504,145 @@ CocosGameSDK.getInstance().setHostListener(object : GameHostListener {
 })
 ```
 
-## 14. 运行独立 Demo
+## 14. 嵌入宿主页面（View 接入）
+
+保留宿主自己的直播详情页、群聊页，只把牌桌放进页面里的一个容器（与 iOS 一致）。牌桌铺满容器，容器尺寸由宿主控制，推荐宽高比 375:211。
+
+- 宿主 Activity 须在 Manifest 声明 `android:configChanges="orientation|keyboardHidden|screenSize|screenLayout|smallestScreenSize"`，否则横屏全屏会重建页面，SDK 会拒绝全屏并打印错误日志。
+- 宿主 `onBackPressed` 须先调用 `CocosGameSDK.getInstance().onBackPressed()`：全屏时退回竖屏、在座时由游戏确认离座，返回 false 再走宿主自己的返回。
+- 横屏全屏：`toggleFullscreen()`，牌桌移到窗口顶层铺满并把页面转为横屏，退出时放回容器并恢复原方向。
+- 迷你条：在 `onMiniModeChanged` 中把容器调整为 362:50（或恢复 375:211）。
+- `closeGame()` 释放牌桌并移出容器；宿主页面销毁时 SDK 自动释放。同一时间只能打开一个牌桌。
+- 钱包余额变化通过 `onGameEvent` 发送 `wallet.balance_changed`，载荷 `{"balanceCent":995420}`。
+
+| `GameHostListener` 回调 | 说明 |
+| --- | --- |
+| `onGameEvent` | 通用事件，含钱包余额变化 |
+| `onMiniModeChanged` | 迷你条变化，宿主调整容器高度 |
+| `onFullscreenChanged` | 横屏全屏变化 |
+| `onPlayingStateChanged` | 是否在座参与本局 |
+| `onBackRequested` | 牌桌请求返回；返回 true 表示宿主自行处理并负责 `closeGame`，默认由 SDK 关闭 |
+| `onSessionInvalid` | 会话失效，SDK 随后关闭牌桌 |
+| `onGameClosed` | 牌桌已关闭并移出容器 |
+
+示例见 `DemoEmbedActivity`，首页勾选「牌桌嵌入宿主页面」后进入。
+
+### 14.1 Java
+
+```java
+CocosGameSDK.getInstance().setHostListener(this);
+CocosGameSDK.getInstance().openGame(this, tableContainer, "niuniu", session);
+
+@Override
+public void onMiniModeChanged(String gameId, boolean isMiniMode) {
+    tableContainer.setLayoutParams(createTableParams(isMiniMode));
+}
+
+@Override
+public void onGameClosed(String gameId) {
+    finish();
+}
+
+@Override
+public void onBackPressed() {
+    if (CocosGameSDK.getInstance().onBackPressed()) return;
+    super.onBackPressed();
+}
+```
+
+### 14.2 Kotlin
+
+```kotlin
+CocosGameSDK.getInstance().setHostListener(this)
+CocosGameSDK.getInstance().openGame(this, tableContainer, "niuniu", session)
+
+override fun onMiniModeChanged(gameId: String, isMiniMode: Boolean) {
+    tableContainer.layoutParams = createTableParams(isMiniMode)
+}
+
+override fun onGameClosed(gameId: String) {
+    finish()
+}
+
+override fun onBackPressed() {
+    if (CocosGameSDK.getInstance().onBackPressed()) return
+    super.onBackPressed()
+}
+```
+
+## 15. 竖屏界面由宿主实现
+
+竖屏下的下注、记录与规则、退出确认都可以由宿主自绘；注册对应监听后竖屏 SDK 不再展示这些界面，全屏仍由 SDK 展示。未注册的监听仍使用 SDK 自带界面。
+
+| 界面 | 监听 | 宿主调用 |
+| --- | --- | --- |
+| 下注 | `setBetListener(GameBetListener)`：`onBetOptions`（注区、筹码、截止时间）、`onBetClosed`、`onBetResult` | `submitBet(roundId, areaCode, amountCent, clientBetNo)` |
+| 记录与规则 | `setRecordsListener(GameRecordsListener)`：`onShowRecords`、`onRecordsUpdated` | `queryRecords(isHistory, filterKey, periodIndex, keyword)`、`loadMoreRecords(isHistory)` |
+| 退出确认 | `setExitListener(GameExitListener)`：`onExitRequested` | `GameExitDecision.leave()` / `stay()` |
+
+- `submitBet` 须在主线程调用；`clientBetNo` 为幂等号（不超过 64 个字符，可用 `CocosGameSDK.createClientBetNo()` 生成），同一幂等号在结果返回前或成功后再次提交会被忽略，失败后可用原幂等号重试。
+- 退出确认必须调用 `leave()` 或 `stay()` 之一；游戏只允许在两局之间离座。
+- 示例见 `DemoHostBetPanel`、`DemoHostRecordsSheet` 与 `DemoBottomContentProvider`。
+
+### 15.1 Java
+
+```java
+CocosGameSDK.getInstance().setBetListener(new GameBetListener() {
+    @Override
+    public void onBetOptions(String gameId, GameBetOptions options) {
+        // 展示注区、筹码，按 options.getDeadlineMillis() 倒计时
+    }
+
+    @Override
+    public void onBetClosed(String gameId, String roundId) {
+        // 收起下注面板
+    }
+
+    @Override
+    public void onBetResult(String gameId, GameBetResult result) {
+        // result.isSuccess()、result.getBalanceCent()、result.getErrorMessage()
+    }
+});
+CocosGameSDK.getInstance().submitBet(roundId, areaCode, amountCent, CocosGameSDK.createClientBetNo());
+
+CocosGameSDK.getInstance().setExitListener((gameId, decision) ->
+    new AlertDialog.Builder(activity)
+        .setTitle("确认离开牌桌？")
+        .setPositiveButton("离开", (dialog, which) -> decision.leave())
+        .setNegativeButton("继续游戏", (dialog, which) -> decision.stay())
+        .setOnDismissListener(dialog -> decision.stay())
+        .show());
+```
+
+### 15.2 Kotlin
+
+```kotlin
+CocosGameSDK.getInstance().setBetListener(object : GameBetListener {
+    override fun onBetOptions(gameId: String, options: GameBetOptions) {
+        // 展示注区、筹码，按 options.deadlineMillis 倒计时
+    }
+
+    override fun onBetClosed(gameId: String, roundId: String) {
+        // 收起下注面板
+    }
+
+    override fun onBetResult(gameId: String, result: GameBetResult) {
+        // result.isSuccess、result.balanceCent、result.errorMessage
+    }
+})
+CocosGameSDK.getInstance().submitBet(roundId, areaCode, amountCent, CocosGameSDK.createClientBetNo())
+
+CocosGameSDK.getInstance().setExitListener { _, decision ->
+    AlertDialog.Builder(activity)
+        .setTitle("确认离开牌桌？")
+        .setPositiveButton("离开") { _, _ -> decision.leave() }
+        .setNegativeButton("继续游戏") { _, _ -> decision.stay() }
+        .setOnDismissListener { decision.stay() }
+        .show()
+}
+```
+
+## 16. 运行独立 Demo
 
 ```shell
 git clone https://github.com/eathwinster-jk/cocos-game-android-demo.git
@@ -529,9 +667,9 @@ APK：
 app/build/outputs/apk/debug/app-debug.apk
 ```
 
-## 15. 常见问题
+## 17. 常见问题
 
-### 15.1 Gradle 无法下载 SDK
+### 17.1 Gradle 无法下载 SDK
 
 检查是否能访问：
 
@@ -545,23 +683,23 @@ https://raw.githubusercontent.com
 ./gradlew --refresh-dependencies :app:assembleDebug
 ```
 
-### 15.2 x86 模拟器无法运行
+### 17.2 x86 模拟器无法运行
 
 当前 SDK 只包含 `arm64-v8a`。使用 ARM 模拟器或 ARM64 真机。
 
-### 15.3 sessionConfig 不能为空
+### 17.3 sessionConfig 不能为空
 
 UID、Token、Scene Type、Scene ID 必须由客户端登录和当前业务场景提供。
 
-### 15.4 WebSocket 认证失败
+### 17.4 WebSocket 认证失败
 
 检查 UID 与 Token 是否匹配、是否过期，以及 HTTP/WS 是否属于同一环境。
 
-### 15.5 场景没有牛牛桌
+### 17.5 场景没有牛牛桌
 
 检查 Scene Type、Scene ID，以及后台是否已在该场景开设牛牛桌。
 
-## 16. 安全注意事项
+## 18. 安全注意事项
 
 - 不要将 UID、Token、账号密码提交到 Git。
 - 不要在日志中打印 Token。

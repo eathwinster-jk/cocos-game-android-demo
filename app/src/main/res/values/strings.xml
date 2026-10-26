@@ -21,4 +21,21 @@
     <string name="demo_bottom_message_2">Stars: Last-minute corner winner!</string>
     <string name="demo_bottom_message_3">Zhuge: So exciting!</string>
     <string name="demo_bottom_mini_mode">Shrink to mini bar ›</string>
+    <string name="demo_bet_waiting">Host betting: waiting for the next round</string>
+    <string name="demo_bet_title">Host betting · Round %1$s · %2$ds left</string>
+    <string name="demo_bet_closed">Betting closed</string>
+    <string name="demo_bet_submitting">Submitting…</string>
+    <string name="demo_bet_rejected">Not sent: betting closed or duplicate submission</string>
+    <string name="demo_bet_success">Bet placed %1$s, balance %2$s</string>
+    <string name="demo_bet_failed">Bet failed: %1$s</string>
+    <string name="demo_records_empty">No records yet</string>
+    <string name="demo_embed_balance">Wallet balance: %1$s</string>
+    <string name="demo_embed_fullscreen">Fullscreen ›</string>
+    <string name="demo_embed_close">Close table ›</string>
+    <string name="demo_embed_closed">Table closed</string>
+    <string name="demo_exit_title">Leave the table?</string>
+    <string name="demo_exit_message">You will leave your seat. Bets already placed this round are settled as usual.</string>
+    <string name="demo_exit_leave">Leave</string>
+    <string name="demo_exit_stay">Stay</string>
+    <string name="embed_mode">Embed table in host page (View)</string>
 </resources>

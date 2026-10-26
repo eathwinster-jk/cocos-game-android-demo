@@ -21,4 +21,21 @@
     <string name="demo_bottom_message_2">众位球星：楼上角球绝杀，这场进球绝杀</string>
     <string name="demo_bottom_message_3">球界诸葛：太刺激了</string>
     <string name="demo_bottom_mini_mode">缩小为迷你条 ›</string>
+    <string name="demo_bet_waiting">宿主下注：等待下一局</string>
+    <string name="demo_bet_title">宿主下注 · 第 %1$s 局 · 剩余 %2$d 秒</string>
+    <string name="demo_bet_closed">本局下注已截止</string>
+    <string name="demo_bet_submitting">提交中…</string>
+    <string name="demo_bet_rejected">未提交：已截止或重复提交</string>
+    <string name="demo_bet_success">下注成功 %1$s，余额 %2$s</string>
+    <string name="demo_bet_failed">下注失败：%1$s</string>
+    <string name="demo_records_empty">暂无记录</string>
+    <string name="demo_embed_balance">钱包余额：%1$s</string>
+    <string name="demo_embed_fullscreen">横屏全屏 ›</string>
+    <string name="demo_embed_close">关闭牌桌 ›</string>
+    <string name="demo_embed_closed">牌桌已关闭</string>
+    <string name="demo_exit_title">确认离开牌桌？</string>
+    <string name="demo_exit_message">离开后将退出座位，本局已下注的部分照常结算。</string>
+    <string name="demo_exit_leave">离开</string>
+    <string name="demo_exit_stay">继续游戏</string>
+    <string name="embed_mode">牌桌嵌入宿主页面（View 接入）</string>
 </resources>

@@ -2,6 +2,7 @@
 package com.eath.cocosgamedemo;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.graphics.Color;
 import android.util.TypedValue;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.eath.cocosgamesdk.CocosGameSDK;
+import com.eath.cocosgamesdk.GameExitDecision;
 import com.eath.cocosgamesdk.GameBottomContentProvider;
 
 final class DemoBottomContentProvider implements GameBottomContentProvider {
@@ -26,13 +28,40 @@ final class DemoBottomContentProvider implements GameBottomContentProvider {
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setPadding(dp(activity, PADDING_HORIZONTAL_DP), dp(activity, PADDING_VERTICAL_DP),
             dp(activity, PADDING_HORIZONTAL_DP), dp(activity, PADDING_VERTICAL_DP));
+        panel.addView(new DemoHostBetPanel(activity));
         panel.addView(createText(activity, R.string.demo_bottom_match, 14, ACCENT_COLOR));
         panel.addView(createText(activity, R.string.demo_bottom_tabs, 17, Color.BLACK));
         panel.addView(createText(activity, R.string.demo_bottom_message_1, 15, Color.DKGRAY));
         panel.addView(createText(activity, R.string.demo_bottom_message_2, 15, Color.DKGRAY));
         panel.addView(createText(activity, R.string.demo_bottom_message_3, 15, ACCENT_COLOR));
         panel.addView(createMiniModeButton(activity));
+        DemoHostRecordsSheet recordsSheet = new DemoHostRecordsSheet(activity);
+        CocosGameSDK.getInstance().setExitListener((id, decision) -> showExitDialog(activity, decision));
+        panel.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View view) {
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(View view) {
+                recordsSheet.release();
+                CocosGameSDK.getInstance().setExitListener(null);
+            }
+        });
         return panel;
+    }
+
+    /**
+     * 宿主自绘竖屏退出确认；点外部或返回键关闭视为继续游戏。
+     */
+    private void showExitDialog(Activity activity, GameExitDecision decision) {
+        new AlertDialog.Builder(activity)
+            .setTitle(R.string.demo_exit_title)
+            .setMessage(R.string.demo_exit_message)
+            .setPositiveButton(R.string.demo_exit_leave, (dialog, which) -> decision.leave())
+            .setNegativeButton(R.string.demo_exit_stay, (dialog, which) -> decision.stay())
+            .setOnDismissListener(dialog -> decision.stay())
+            .show();
     }
 
     /**
