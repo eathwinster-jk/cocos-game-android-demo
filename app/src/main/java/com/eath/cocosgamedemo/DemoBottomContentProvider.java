@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.eath.cocosgamesdk.CocosGameSDK;
 import com.eath.cocosgamesdk.GameBottomContentProvider;
 
 final class DemoBottomContentProvider implements GameBottomContentProvider {
@@ -30,7 +31,17 @@ final class DemoBottomContentProvider implements GameBottomContentProvider {
         panel.addView(createText(activity, R.string.demo_bottom_message_1, 15, Color.DKGRAY));
         panel.addView(createText(activity, R.string.demo_bottom_message_2, 15, Color.DKGRAY));
         panel.addView(createText(activity, R.string.demo_bottom_message_3, 15, ACCENT_COLOR));
+        panel.addView(createMiniModeButton(activity));
         return panel;
+    }
+
+    /**
+     * 演示宿主把牌桌缩小为迷你条，展开由游戏内按钮触发。
+     */
+    private View createMiniModeButton(Activity activity) {
+        TextView button = createText(activity, R.string.demo_bottom_mini_mode, 15, ACCENT_COLOR);
+        button.setOnClickListener(view -> CocosGameSDK.getInstance().setMiniMode(true));
+        return button;
     }
 
     /**

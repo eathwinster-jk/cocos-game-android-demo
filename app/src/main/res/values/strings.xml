@@ -20,4 +20,5 @@
     <string name="demo_bottom_message_1">Dali: Is that real?</string>
     <string name="demo_bottom_message_2">Stars: Last-minute corner winner!</string>
     <string name="demo_bottom_message_3">Zhuge: So exciting!</string>
+    <string name="demo_bottom_mini_mode">Shrink to mini bar ›</string>
 </resources>

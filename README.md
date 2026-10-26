@@ -2,7 +2,7 @@
 
 ## 1. SDK 信息
 
-- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.1.10`
+- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.1.11`
 - SDK 仓库：https://github.com/eathwinster-jk/cocos-game-android-sdk
 - 当前模块：`niuniu`
 - ABI：`arm64-v8a`
@@ -30,13 +30,13 @@ SDK 不负责生产登录，也不内置固定 UID、Token 或 Scene ID。
 从 SDK 仓库下载：
 
 ```text
-repository/com/eath/cocosgamesdk/game-sdk/0.1.10/game-sdk-0.1.10.aar
+repository/com/eath/cocosgamesdk/game-sdk/0.1.11/game-sdk-0.1.11.aar
 ```
 
 复制到宿主：
 
 ```text
-app/libs/game-sdk-0.1.10.aar
+app/libs/game-sdk-0.1.11.aar
 ```
 
 ### 2.2 Groovy 配置
@@ -68,7 +68,7 @@ android {
 }
 
 dependencies {
-    implementation files("libs/game-sdk-0.1.10.aar")
+    implementation files("libs/game-sdk-0.1.11.aar")
 }
 ```
 
@@ -101,7 +101,7 @@ android {
 }
 
 dependencies {
-    implementation(files("libs/game-sdk-0.1.10.aar"))
+    implementation(files("libs/game-sdk-0.1.11.aar"))
 }
 ```
 
@@ -130,7 +130,7 @@ dependencyResolutionManagement {
 
 ```groovy
 dependencies {
-    implementation "com.eath.cocosgamesdk:game-sdk:0.1.10"
+    implementation "com.eath.cocosgamesdk:game-sdk:0.1.11"
 }
 ```
 
@@ -155,7 +155,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("com.eath.cocosgamesdk:game-sdk:0.1.10")
+    implementation("com.eath.cocosgamesdk:game-sdk:0.1.11")
 }
 ```
 
@@ -469,7 +469,42 @@ CocosGameSDK.getInstance().setBottomContentProvider { activity, gameId ->
 - 不要持有传入的 `Activity`，游戏页关闭后即失效
 - 示例实现见 `app/src/main/java/com/eath/cocosgamedemo/DemoBottomContentProvider.java`
 
-## 13. 运行独立 Demo
+## 13. 迷你条
+
+宿主可把牌桌缩成顶部 362:50 的横条，下方宿主内容随之上移。迷你条显示局数、阶段、头像、手牌与结算输赢、余额、展开和退出按钮；入座时显示自己，旁观时显示庄家。
+
+- `setMiniMode(true)` 缩小，`setMiniMode(false)` 恢复；游戏页未打开时忽略。
+- 玩家点击迷你条展开按钮时，SDK 自动恢复牌桌，宿主无需处理。
+- 退出按钮与牌桌返回按钮行为一致。
+- 迷你模式下不可切换全屏，处于全屏时进入迷你条会先退出全屏。
+- 状态变化（宿主切换或玩家点击展开）通过 `GameHostListener.onMiniModeChanged` 回调。
+
+### 13.1 Java
+
+```java
+CocosGameSDK.getInstance().setMiniMode(true);
+
+CocosGameSDK.getInstance().setHostListener(new GameHostListener() {
+    @Override
+    public void onMiniModeChanged(String gameId, boolean isMiniMode) {
+        // 同步宿主自己的按钮状态等
+    }
+});
+```
+
+### 13.2 Kotlin
+
+```kotlin
+CocosGameSDK.getInstance().setMiniMode(true)
+
+CocosGameSDK.getInstance().setHostListener(object : GameHostListener {
+    override fun onMiniModeChanged(gameId: String, isMiniMode: Boolean) {
+        // 同步宿主自己的按钮状态等
+    }
+})
+```
+
+## 14. 运行独立 Demo
 
 ```shell
 git clone https://github.com/eathwinster-jk/cocos-game-android-demo.git
@@ -494,9 +529,9 @@ APK：
 app/build/outputs/apk/debug/app-debug.apk
 ```
 
-## 14. 常见问题
+## 15. 常见问题
 
-### 14.1 Gradle 无法下载 SDK
+### 15.1 Gradle 无法下载 SDK
 
 检查是否能访问：
 
@@ -510,23 +545,23 @@ https://raw.githubusercontent.com
 ./gradlew --refresh-dependencies :app:assembleDebug
 ```
 
-### 14.2 x86 模拟器无法运行
+### 15.2 x86 模拟器无法运行
 
 当前 SDK 只包含 `arm64-v8a`。使用 ARM 模拟器或 ARM64 真机。
 
-### 14.3 sessionConfig 不能为空
+### 15.3 sessionConfig 不能为空
 
 UID、Token、Scene Type、Scene ID 必须由客户端登录和当前业务场景提供。
 
-### 14.4 WebSocket 认证失败
+### 15.4 WebSocket 认证失败
 
 检查 UID 与 Token 是否匹配、是否过期，以及 HTTP/WS 是否属于同一环境。
 
-### 14.5 场景没有牛牛桌
+### 15.5 场景没有牛牛桌
 
 检查 Scene Type、Scene ID，以及后台是否已在该场景开设牛牛桌。
 
-## 15. 安全注意事项
+## 16. 安全注意事项
 
 - 不要将 UID、Token、账号密码提交到 Git。
 - 不要在日志中打印 Token。
