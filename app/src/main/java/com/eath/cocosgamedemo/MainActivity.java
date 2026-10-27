@@ -4,6 +4,7 @@ package com.eath.cocosgamedemo;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.InputType;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -39,8 +40,12 @@ public final class MainActivity extends Activity {
     private EditText sceneTypeInput;
     private EditText sceneIdInput;
     private CheckBox embedModeCheckBox;
-    private final GameHostListener hostListener = (gameId, event, payloadJson) ->
+    private final GameHostListener hostListener = (gameId, event, payloadJson) -> {
         Log.i(LOG_TAG, "gameId=" + gameId + ", event=" + event + ", payload=" + payloadJson);
+        if ("auth.login_required".equals(event)) {
+            Toast.makeText(getApplicationContext(), R.string.guest_login_required, Toast.LENGTH_SHORT).show();
+        }
+    };
 
     /** 初始化 SDK 和测试输入页。 */
     @Override
@@ -83,6 +88,11 @@ public final class MainActivity extends Activity {
         accountLoginButton.setAllCaps(false);
         accountLoginButton.setOnClickListener(view -> handleAccountLogin());
         root.addView(accountLoginButton, createItemParams(dp(56)));
+        Button guestButton = new Button(this);
+        guestButton.setText(R.string.guest_open);
+        guestButton.setAllCaps(false);
+        guestButton.setOnClickListener(view -> openGuestGame());
+        root.addView(guestButton, createItemParams(dp(56)));
         root.addView(userIdInput, createItemParams(dp(56)));
         root.addView(imUserIdInput, createItemParams(dp(56)));
         root.addView(tokenInput, createItemParams(dp(56)));
@@ -171,6 +181,34 @@ public final class MainActivity extends Activity {
             0,
             BuildConfig.VERSION_NAME,
             "Android");
+        openSession(session);
+    }
+
+    /**
+     * 以游客身份打开直播间牌桌：游客仅支持直播间，设备编号使用 ANDROID_ID。
+     */
+    private void openGuestGame() {
+        try {
+            String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            GameSessionConfig session = GameSessionConfig.createGuest(
+                BuildConfig.GAME_WS_URL,
+                BuildConfig.GAME_API_URL,
+                "android-" + androidId,
+                BuildConfig.GAME_GUEST_SCENE_ID,
+                0,
+                BuildConfig.VERSION_NAME,
+                "Android");
+            openSession(session);
+        } catch (IllegalArgumentException error) {
+            Log.e(LOG_TAG, "游客会话校验失败", error);
+            Toast.makeText(this, R.string.invalid_input, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * 按是否勾选嵌入模式打开游戏。
+     */
+    private void openSession(GameSessionConfig session) {
         if (embedModeCheckBox.isChecked()) {
             startActivity(DemoEmbedActivity.createIntent(this, session));
             return;

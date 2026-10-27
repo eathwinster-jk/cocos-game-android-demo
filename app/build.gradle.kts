@@ -14,6 +14,7 @@ android {
         versionName = "0.1.10"
         buildConfigField("String", "GAME_WS_URL", "\"wss://test.imnono.net/game-ws/ws\"")
         buildConfigField("String", "GAME_API_URL", "\"https://test.imnono.net/game-lobby\"")
+        buildConfigField("String", "GAME_GUEST_SCENE_ID", "\"3947124\"")
         buildConfigField("String", "LOGIN_API_URL", "\"https://test2.kzb001.net/prod-api/login\"")
         buildConfigField("int", "LOGIN_PID", "4")
         buildConfigField("String", "LOGIN_VERSION", "\"1.120\"")
@@ -40,7 +41,7 @@ android {
 
 dependencies {
     val gameSdkVersion = providers.gradleProperty("gameSdkVersion")
-        .orElse("0.2.0")
+        .orElse("0.2.1")
         .get()
     implementation("com.eath.cocosgamesdk:game-sdk:$gameSdkVersion")
 }

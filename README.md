@@ -2,7 +2,7 @@
 
 ## 1. SDK 信息
 
-- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.2.0`
+- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.2.1`
 - SDK 仓库：https://github.com/eathwinster-jk/cocos-game-android-sdk
 - 当前模块：`niuniu`
 - ABI：`arm64-v8a`
@@ -21,7 +21,7 @@
 - WebSocket 地址
 - 大厅 API 地址
 
-SDK 不负责生产登录，也不内置固定 UID、Token 或 Scene ID。
+SDK 不负责生产登录，也不内置固定 UID、Token 或 Scene ID。未登录用户可使用游客观战，见第 16 节。
 
 ## 2. 接入模式一：本地 AAR
 
@@ -30,13 +30,13 @@ SDK 不负责生产登录，也不内置固定 UID、Token 或 Scene ID。
 从 SDK 仓库下载：
 
 ```text
-repository/com/eath/cocosgamesdk/game-sdk/0.2.0/game-sdk-0.2.0.aar
+repository/com/eath/cocosgamesdk/game-sdk/0.2.1/game-sdk-0.2.1.aar
 ```
 
 复制到宿主：
 
 ```text
-app/libs/game-sdk-0.2.0.aar
+app/libs/game-sdk-0.2.1.aar
 ```
 
 ### 2.2 Groovy 配置
@@ -68,7 +68,7 @@ android {
 }
 
 dependencies {
-    implementation files("libs/game-sdk-0.2.0.aar")
+    implementation files("libs/game-sdk-0.2.1.aar")
 }
 ```
 
@@ -101,7 +101,7 @@ android {
 }
 
 dependencies {
-    implementation(files("libs/game-sdk-0.2.0.aar"))
+    implementation(files("libs/game-sdk-0.2.1.aar"))
 }
 ```
 
@@ -130,7 +130,7 @@ dependencyResolutionManagement {
 
 ```groovy
 dependencies {
-    implementation "com.eath.cocosgamesdk:game-sdk:0.2.0"
+    implementation "com.eath.cocosgamesdk:game-sdk:0.2.1"
 }
 ```
 
@@ -155,7 +155,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("com.eath.cocosgamesdk:game-sdk:0.2.0")
+    implementation("com.eath.cocosgamesdk:game-sdk:0.2.1")
 }
 ```
 
@@ -642,7 +642,70 @@ CocosGameSDK.getInstance().setExitListener { _, decision ->
 }
 ```
 
-## 16. 运行独立 Demo
+## 16. 游客观战（仅直播间）
+
+未登录用户可以游客身份进入直播间观战，群聊必须登录。游客只能观战：
+
+- 宿主用设备唯一编号创建游客会话，`deviceId` 为 1~128 个字符，不能包含空白或控制字符
+- 游客牌桌不显示右上角余额，下注阶段不弹下注窗，也不通知宿主
+- 需要登录的操作统一通过 `onGameEvent` 发送 `auth.login_required`，由宿主提示登录：
+
+| 载荷 | 触发操作 |
+| --- | --- |
+| `{"action":"join"}` | 点击立即加入 |
+| `{"action":"records"}` | 点击记录与规则 |
+| `{"action":"fullscreen"}` | 点击全屏（旋转大屏），不会进入全屏 |
+
+- 建议留在游戏页提示登录或拉起登录页；登录成功后再 `closeGame()`，并用登录会话重新 `openGame`。不要在事件回调里直接关闭牌桌
+
+### 16.1 Java
+
+```java
+String deviceId = "android-" + Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+GameSessionConfig session = GameSessionConfig.createGuest(
+    "wss://test.imnono.net/game-ws/ws",
+    "https://test.imnono.net/game-lobby",
+    deviceId,
+    liveRoomId,
+    0,
+    BuildConfig.VERSION_NAME,
+    "Android"
+);
+CocosGameSDK.getInstance().openGame(this, tableContainer, "niuniu", session);
+
+@Override
+public void onGameEvent(String gameId, String event, String payloadJson) {
+    if ("auth.login_required".equals(event)) {
+        showLoginPrompt();
+    }
+}
+```
+
+### 16.2 Kotlin
+
+```kotlin
+val deviceId = "android-" + Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+val session = GameSessionConfig.createGuest(
+    "wss://test.imnono.net/game-ws/ws",
+    "https://test.imnono.net/game-lobby",
+    deviceId,
+    liveRoomId,
+    0,
+    BuildConfig.VERSION_NAME,
+    "Android",
+)
+CocosGameSDK.getInstance().openGame(this, tableContainer, "niuniu", session)
+
+override fun onGameEvent(gameId: String, event: String, payloadJson: String) {
+    if (event == "auth.login_required") {
+        showLoginPrompt()
+    }
+}
+```
+
+示例见 Demo 首页「游客观战（直播间）」按钮与 `DemoEmbedActivity`。
+
+## 17. 运行独立 Demo
 
 ```shell
 git clone https://github.com/eathwinster-jk/cocos-game-android-demo.git
@@ -667,9 +730,9 @@ APK：
 app/build/outputs/apk/debug/app-debug.apk
 ```
 
-## 17. 常见问题
+## 18. 常见问题
 
-### 17.1 Gradle 无法下载 SDK
+### 18.1 Gradle 无法下载 SDK
 
 检查是否能访问：
 
@@ -683,23 +746,23 @@ https://raw.githubusercontent.com
 ./gradlew --refresh-dependencies :app:assembleDebug
 ```
 
-### 17.2 x86 模拟器无法运行
+### 18.2 x86 模拟器无法运行
 
 当前 SDK 只包含 `arm64-v8a`。使用 ARM 模拟器或 ARM64 真机。
 
-### 17.3 sessionConfig 不能为空
+### 18.3 sessionConfig 不能为空
 
 UID、Token、Scene Type、Scene ID 必须由客户端登录和当前业务场景提供。
 
-### 17.4 WebSocket 认证失败
+### 18.4 WebSocket 认证失败
 
 检查 UID 与 Token 是否匹配、是否过期，以及 HTTP/WS 是否属于同一环境。
 
-### 17.5 场景没有牛牛桌
+### 18.5 场景没有牛牛桌
 
 检查 Scene Type、Scene ID，以及后台是否已在该场景开设牛牛桌。
 
-## 18. 安全注意事项
+## 19. 安全注意事项
 
 - 不要将 UID、Token、账号密码提交到 Git。
 - 不要在日志中打印 Token。

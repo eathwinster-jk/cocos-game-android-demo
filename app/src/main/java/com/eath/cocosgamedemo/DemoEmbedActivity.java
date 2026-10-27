@@ -27,6 +27,7 @@ public final class DemoEmbedActivity extends Activity implements GameHostListene
     private static final String EXTRA_SESSION_CONFIG = "sessionConfig";
     private static final String GAME_ID = "niuniu";
     private static final String WALLET_EVENT = "wallet.balance_changed";
+    private static final String LOGIN_REQUIRED_EVENT = "auth.login_required";
     private static final float TABLE_HEIGHT_RATIO = 211F / 375F;
     private static final float MINI_BAR_HEIGHT_RATIO = 50F / 362F;
     private static final int MINI_BAR_MARGIN_DP = 6;
@@ -120,6 +121,10 @@ public final class DemoEmbedActivity extends Activity implements GameHostListene
 
     @Override
     public void onGameEvent(String gameId, String event, String payloadJson) {
+        if (LOGIN_REQUIRED_EVENT.equals(event)) {
+            handleLoginRequired(payloadJson);
+            return;
+        }
         if (!WALLET_EVENT.equals(event)) return;
         try {
             long balanceCent = new JSONObject(payloadJson).getLong("balanceCent");
@@ -128,6 +133,14 @@ public final class DemoEmbedActivity extends Activity implements GameHostListene
         } catch (JSONException error) {
             Log.e(TAG, "解析钱包事件失败，payload=" + payloadJson, error);
         }
+    }
+
+    /**
+     * 游客触发需登录操作：留在游戏页仅提示登录，宿主登录成功后再关闭游客牌桌并以登录会话重新打开。
+     */
+    private void handleLoginRequired(String payloadJson) {
+        Log.i(TAG, "游客需要登录，payload=" + payloadJson);
+        Toast.makeText(this, R.string.guest_login_required, Toast.LENGTH_SHORT).show();
     }
 
     @Override

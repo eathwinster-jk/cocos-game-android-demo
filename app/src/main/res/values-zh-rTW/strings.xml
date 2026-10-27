@@ -38,4 +38,6 @@
     <string name="demo_exit_leave">離開</string>
     <string name="demo_exit_stay">繼續遊戲</string>
     <string name="embed_mode">牌桌嵌入宿主頁面（View 接入）</string>
+    <string name="guest_open">遊客觀戰（直播間）</string>
+    <string name="guest_login_required">請先登入後再入座、查看紀錄或全螢幕觀看</string>
 </resources>
