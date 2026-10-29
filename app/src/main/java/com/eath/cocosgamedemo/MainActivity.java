@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.eath.cocosgamesdk.CocosGameActivity;
 import com.eath.cocosgamesdk.CocosGameSDK;
+import com.eath.cocosgamesdk.GameEvents;
 import com.eath.cocosgamesdk.GameHostListener;
 import com.eath.cocosgamesdk.GameSessionConfig;
 
@@ -42,7 +43,7 @@ public final class MainActivity extends Activity {
     private CheckBox embedModeCheckBox;
     private final GameHostListener hostListener = (gameId, event, payloadJson) -> {
         Log.i(LOG_TAG, "gameId=" + gameId + ", event=" + event + ", payload=" + payloadJson);
-        if ("auth.login_required".equals(event)) {
+        if (GameEvents.LOGIN_REQUIRED.equals(event)) {
             Toast.makeText(getApplicationContext(), R.string.guest_login_required, Toast.LENGTH_SHORT).show();
         }
     };

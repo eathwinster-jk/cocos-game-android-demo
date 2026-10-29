@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eath.cocosgamesdk.CocosGameSDK;
+import com.eath.cocosgamesdk.GameEvents;
 import com.eath.cocosgamesdk.GameHostListener;
 import com.eath.cocosgamesdk.GameSessionConfig;
 
@@ -26,8 +27,6 @@ public final class DemoEmbedActivity extends Activity implements GameHostListene
     private static final String TAG = "DemoEmbedActivity";
     private static final String EXTRA_SESSION_CONFIG = "sessionConfig";
     private static final String GAME_ID = "niuniu";
-    private static final String WALLET_EVENT = "wallet.balance_changed";
-    private static final String LOGIN_REQUIRED_EVENT = "auth.login_required";
     private static final float TABLE_HEIGHT_RATIO = 211F / 375F;
     private static final float MINI_BAR_HEIGHT_RATIO = 50F / 362F;
     private static final int MINI_BAR_MARGIN_DP = 6;
@@ -121,11 +120,11 @@ public final class DemoEmbedActivity extends Activity implements GameHostListene
 
     @Override
     public void onGameEvent(String gameId, String event, String payloadJson) {
-        if (LOGIN_REQUIRED_EVENT.equals(event)) {
+        if (GameEvents.LOGIN_REQUIRED.equals(event)) {
             handleLoginRequired(payloadJson);
             return;
         }
-        if (!WALLET_EVENT.equals(event)) return;
+        if (!GameEvents.WALLET_BALANCE_CHANGED.equals(event)) return;
         try {
             long balanceCent = new JSONObject(payloadJson).getLong("balanceCent");
             String amount = "¥" + BigDecimal.valueOf(balanceCent).movePointLeft(2).stripTrailingZeros().toPlainString();

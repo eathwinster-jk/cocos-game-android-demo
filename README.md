@@ -2,7 +2,7 @@
 
 ## 1. SDK 信息
 
-- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.2.1`
+- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.2.2`
 - SDK 仓库：https://github.com/eathwinster-jk/cocos-game-android-sdk
 - 当前模块：`niuniu`
 - ABI：`arm64-v8a`
@@ -30,13 +30,13 @@ SDK 不负责生产登录，也不内置固定 UID、Token 或 Scene ID。未登
 从 SDK 仓库下载：
 
 ```text
-repository/com/eath/cocosgamesdk/game-sdk/0.2.1/game-sdk-0.2.1.aar
+repository/com/eath/cocosgamesdk/game-sdk/0.2.2/game-sdk-0.2.2.aar
 ```
 
 复制到宿主：
 
 ```text
-app/libs/game-sdk-0.2.1.aar
+app/libs/game-sdk-0.2.2.aar
 ```
 
 ### 2.2 Groovy 配置
@@ -68,7 +68,7 @@ android {
 }
 
 dependencies {
-    implementation files("libs/game-sdk-0.2.1.aar")
+    implementation files("libs/game-sdk-0.2.2.aar")
 }
 ```
 
@@ -101,7 +101,7 @@ android {
 }
 
 dependencies {
-    implementation(files("libs/game-sdk-0.2.1.aar"))
+    implementation(files("libs/game-sdk-0.2.2.aar"))
 }
 ```
 
@@ -130,7 +130,7 @@ dependencyResolutionManagement {
 
 ```groovy
 dependencies {
-    implementation "com.eath.cocosgamesdk:game-sdk:0.2.1"
+    implementation "com.eath.cocosgamesdk:game-sdk:0.2.2"
 }
 ```
 
@@ -155,7 +155,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("com.eath.cocosgamesdk:game-sdk:0.2.1")
+    implementation("com.eath.cocosgamesdk:game-sdk:0.2.2")
 }
 ```
 
@@ -656,6 +656,7 @@ CocosGameSDK.getInstance().setExitListener { _, decision ->
 | `{"action":"records"}` | 点击记录与规则 |
 | `{"action":"fullscreen"}` | 点击全屏（旋转大屏），不会进入全屏 |
 
+- 事件名与 `action` 取值可直接用 SDK 0.2.2 起提供的常量：`GameEvents.LOGIN_REQUIRED`、`GameEvents.WALLET_BALANCE_CHANGED`、`GameEvents.LOGIN_ACTION_JOIN` / `LOGIN_ACTION_RECORDS` / `LOGIN_ACTION_FULLSCREEN`
 - 建议留在游戏页提示登录或拉起登录页；登录成功后再 `closeGame()`，并用登录会话重新 `openGame`。不要在事件回调里直接关闭牌桌
 
 ### 16.1 Java
@@ -675,7 +676,7 @@ CocosGameSDK.getInstance().openGame(this, tableContainer, "niuniu", session);
 
 @Override
 public void onGameEvent(String gameId, String event, String payloadJson) {
-    if ("auth.login_required".equals(event)) {
+    if (GameEvents.LOGIN_REQUIRED.equals(event)) {
         showLoginPrompt();
     }
 }
@@ -697,7 +698,7 @@ val session = GameSessionConfig.createGuest(
 CocosGameSDK.getInstance().openGame(this, tableContainer, "niuniu", session)
 
 override fun onGameEvent(gameId: String, event: String, payloadJson: String) {
-    if (event == "auth.login_required") {
+    if (event == GameEvents.LOGIN_REQUIRED) {
         showLoginPrompt()
     }
 }
