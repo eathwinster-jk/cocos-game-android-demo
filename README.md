@@ -2,7 +2,7 @@
 
 ## 1. SDK 信息
 
-- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.2.3`
+- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.2.4`
 - SDK 仓库：https://github.com/eathwinster-jk/cocos-game-android-sdk
 - 当前模块：`niuniu`
 - ABI：`arm64-v8a`
@@ -30,13 +30,13 @@ SDK 不负责生产登录，也不内置固定 UID、Token 或 Scene ID。未登
 从 SDK 仓库下载：
 
 ```text
-repository/com/eath/cocosgamesdk/game-sdk/0.2.3/game-sdk-0.2.3.aar
+repository/com/eath/cocosgamesdk/game-sdk/0.2.4/game-sdk-0.2.4.aar
 ```
 
 复制到宿主：
 
 ```text
-app/libs/game-sdk-0.2.3.aar
+app/libs/game-sdk-0.2.4.aar
 ```
 
 ### 2.2 Groovy 配置
@@ -68,7 +68,7 @@ android {
 }
 
 dependencies {
-    implementation files("libs/game-sdk-0.2.3.aar")
+    implementation files("libs/game-sdk-0.2.4.aar")
 }
 ```
 
@@ -101,7 +101,7 @@ android {
 }
 
 dependencies {
-    implementation(files("libs/game-sdk-0.2.3.aar"))
+    implementation(files("libs/game-sdk-0.2.4.aar"))
 }
 ```
 
@@ -130,7 +130,7 @@ dependencyResolutionManagement {
 
 ```groovy
 dependencies {
-    implementation "com.eath.cocosgamesdk:game-sdk:0.2.3"
+    implementation "com.eath.cocosgamesdk:game-sdk:0.2.4"
 }
 ```
 
@@ -155,7 +155,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("com.eath.cocosgamesdk:game-sdk:0.2.3")
+    implementation("com.eath.cocosgamesdk:game-sdk:0.2.4")
 }
 ```
 
@@ -642,10 +642,11 @@ CocosGameSDK.getInstance().setExitListener { _, decision ->
 }
 ```
 
-## 16. 游客观战（仅直播间）
+## 16. 游客观战（直播间与群聊）
 
-未登录用户可以游客身份进入直播间观战，群聊必须登录。游客只能观战：
+未登录用户可以游客身份进入直播间或 IM 群观战（群聊游客 SDK 0.2.4 起支持）。游客只能观战：
 
+- `GameSessionConfig.createGuest(..., deviceId, sceneType, sceneId, ...)` 中 `sceneType` 传 1 直播间、2 IM 群；不带 `sceneType` 的旧重载默认直播间
 - 宿主用设备唯一编号创建游客会话，`deviceId` 为 1~128 个字符，不能包含空白或控制字符
 - 游客牌桌不显示右上角余额，下注阶段不弹下注窗，也不通知宿主
 - 需要登录的操作统一通过 `onGameEvent` 发送 `auth.login_required`，由宿主提示登录：
@@ -667,7 +668,8 @@ GameSessionConfig session = GameSessionConfig.createGuest(
     "wss://test.imnono.net/game-ws/ws",
     "https://test.imnono.net/game-lobby",
     deviceId,
-    liveRoomId,
+    2,              // 场景类型：1 直播间，2 IM 群
+    sceneId,        // 直播间编号或群号
     0,
     BuildConfig.VERSION_NAME,
     "Android"
@@ -690,7 +692,8 @@ val session = GameSessionConfig.createGuest(
     "wss://test.imnono.net/game-ws/ws",
     "https://test.imnono.net/game-lobby",
     deviceId,
-    liveRoomId,
+    2,              // 场景类型：1 直播间，2 IM 群
+    sceneId,        // 直播间编号或群号
     0,
     BuildConfig.VERSION_NAME,
     "Android",

@@ -186,7 +186,7 @@ public final class MainActivity extends Activity {
     }
 
     /**
-     * 以游客身份打开直播间牌桌：游客仅支持直播间，设备编号使用 ANDROID_ID。
+     * 以游客身份打开直播间牌桌，设备编号使用 ANDROID_ID；群聊游客可用带 sceneType 的 createGuest。
      */
     private void openGuestGame() {
         try {
