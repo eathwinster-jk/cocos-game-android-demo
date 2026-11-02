@@ -40,4 +40,13 @@
     <string name="embed_mode">牌桌嵌入宿主页面（View 接入）</string>
     <string name="guest_open">游客观战（直播间）</string>
     <string name="guest_login_required">请先登录后再入座、查看记录或全屏观看</string>
+    <string name="demo_embed_toggle_back">返回按钮 ›</string>
+    <string name="demo_embed_leave_title">离开游戏？</string>
+    <string name="demo_embed_leave_message">确定要离开游戏吗？</string>
+    <string name="demo_embed_leave_seated_message">你已在座，离开前是否离座？</string>
+    <string name="demo_embed_in_game_message">本局进行中，可保留座位离开。</string>
+    <string name="demo_embed_leave_confirm">离开</string>
+    <string name="demo_embed_leave_cancel">取消</string>
+    <string name="demo_embed_leave_with_seat">离座并离开</string>
+    <string name="demo_embed_leave_keep_seat">保留座位离开</string>
 </resources>

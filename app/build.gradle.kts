@@ -41,7 +41,7 @@ android {
 
 dependencies {
     val gameSdkVersion = providers.gradleProperty("gameSdkVersion")
-        .orElse("0.2.4")
+        .orElse("0.6.0")
         .get()
     implementation("com.eath.cocosgamesdk:game-sdk:$gameSdkVersion")
 }

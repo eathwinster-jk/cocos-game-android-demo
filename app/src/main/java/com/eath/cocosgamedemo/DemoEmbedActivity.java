@@ -2,6 +2,7 @@
 package com.eath.cocosgamedemo;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eath.cocosgamesdk.CocosGameSDK;
+import com.eath.cocosgamesdk.GameBackInfo;
 import com.eath.cocosgamesdk.GameEvents;
 import com.eath.cocosgamesdk.GameHostListener;
 import com.eath.cocosgamesdk.GameSessionConfig;
@@ -33,6 +35,7 @@ public final class DemoEmbedActivity extends Activity implements GameHostListene
     private static final int ACCENT_COLOR = Color.rgb(25, 180, 180);
     private FrameLayout tableContainer;
     private TextView balanceView;
+    private boolean isBackButtonVisible = true;
 
     /**
      * 创建打开嵌入页的 Intent。
@@ -55,6 +58,8 @@ public final class DemoEmbedActivity extends Activity implements GameHostListene
         }
         setContentView(createPage());
         CocosGameSDK.getInstance().setHostListener(this);
+        CocosGameSDK.getInstance().setBackButtonVisible(isBackButtonVisible);
+        CocosGameSDK.getInstance().setCollapseButtonVisible(true);
         CocosGameSDK.getInstance().openGame(this, tableContainer, GAME_ID, (GameSessionConfig) sessionConfig);
     }
 
@@ -78,7 +83,7 @@ public final class DemoEmbedActivity extends Activity implements GameHostListene
     }
 
     /**
-     * 创建全屏与关闭按钮行。
+     * 创建全屏、关闭与返回按钮显隐切换行。
      */
     private LinearLayout createActionRow() {
         LinearLayout row = new LinearLayout(this);
@@ -86,9 +91,20 @@ public final class DemoEmbedActivity extends Activity implements GameHostListene
         fullscreen.setOnClickListener(view -> CocosGameSDK.getInstance().toggleFullscreen());
         TextView close = createActionText(getString(R.string.demo_embed_close));
         close.setOnClickListener(view -> CocosGameSDK.getInstance().closeGame());
+        TextView toggleBack = createActionText(getString(R.string.demo_embed_toggle_back));
+        toggleBack.setOnClickListener(view -> toggleBackButton());
         row.addView(fullscreen);
         row.addView(close);
+        row.addView(toggleBack);
         return row;
+    }
+
+    /**
+     * 演示宿主控制牌桌返回按钮显隐。
+     */
+    private void toggleBackButton() {
+        isBackButtonVisible = !isBackButtonVisible;
+        CocosGameSDK.getInstance().setBackButtonVisible(isBackButtonVisible);
     }
 
     /**
@@ -147,6 +163,28 @@ public final class DemoEmbedActivity extends Activity implements GameHostListene
         tableContainer.setLayoutParams(createTableParams(isMiniMode));
     }
 
+    /**
+     * 牌桌点击返回，由宿主决定离开方式：exitGame 离座后关闭，closeGame 保留座位直接关闭；本局进行中只能保留座位离开。
+     */
+    @Override
+    public void onBackClicked(String gameId, GameBackInfo info) {
+        Log.i(TAG, "牌桌点击返回，info=" + info);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+            .setTitle(R.string.demo_embed_leave_title)
+            .setNegativeButton(R.string.demo_embed_leave_cancel, null);
+        if (!info.isPlaying()) {
+            builder.setMessage(R.string.demo_embed_leave_message)
+                .setPositiveButton(R.string.demo_embed_leave_confirm, (dialog, which) -> CocosGameSDK.getInstance().exitGame());
+        } else {
+            builder.setMessage(info.isInGame() ? R.string.demo_embed_in_game_message : R.string.demo_embed_leave_seated_message)
+                .setNeutralButton(R.string.demo_embed_leave_keep_seat, (dialog, which) -> CocosGameSDK.getInstance().closeGame());
+            if (!info.isInGame()) {
+                builder.setPositiveButton(R.string.demo_embed_leave_with_seat, (dialog, which) -> CocosGameSDK.getInstance().exitGame());
+            }
+        }
+        builder.show();
+    }
+
     @Override
     public void onSessionInvalid(String gameId, String message) {
         Toast.makeText(this, getString(R.string.session_invalid, message), Toast.LENGTH_LONG).show();
@@ -159,7 +197,7 @@ public final class DemoEmbedActivity extends Activity implements GameHostListene
     }
 
     /**
-     * 返回键先交给牌桌：全屏退回竖屏、在座确认离座，未消费时再关闭页面。
+     * 返回键先交给牌桌：全屏退回竖屏，牌桌就绪后回调 onBackClicked，未消费时再关闭页面。
      */
     @Override
     public void onBackPressed() {

@@ -40,4 +40,13 @@
     <string name="embed_mode">Embed table in host page (View)</string>
     <string name="guest_open">Watch as guest (live room)</string>
     <string name="guest_login_required">Please log in to join, view records or watch in fullscreen</string>
+    <string name="demo_embed_toggle_back">Back button ›</string>
+    <string name="demo_embed_leave_title">Leave game?</string>
+    <string name="demo_embed_leave_message">Are you sure you want to leave the game?</string>
+    <string name="demo_embed_leave_seated_message">You are seated. Leave your seat before exiting, or keep your seat?</string>
+    <string name="demo_embed_in_game_message">This round is in progress. You can leave and keep your seat.</string>
+    <string name="demo_embed_leave_confirm">Leave</string>
+    <string name="demo_embed_leave_cancel">Cancel</string>
+    <string name="demo_embed_leave_with_seat">Leave seat</string>
+    <string name="demo_embed_leave_keep_seat">Keep seat</string>
 </resources>
