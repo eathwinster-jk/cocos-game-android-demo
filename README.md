@@ -2,7 +2,7 @@
 
 ## 1. SDK 信息
 
-- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.6.0`
+- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.7.0`
 - SDK 仓库：https://github.com/eathwinster-jk/cocos-game-android-sdk
 - 当前模块：`niuniu`
 - ABI：`arm64-v8a`
@@ -10,6 +10,7 @@
 - `minSdkVersion`：26
 - `targetSdkVersion`：34
 - Java：JDK 17 构建，Java 8 代码兼容
+- 游戏模块热更新：0.7.0 起 SDK 不再内置游戏，必须同时依赖 `com.eath.cocosgamesdk:game-sdk-hotupdate:0.7.0`，并在 `CocosGameSDK.getInstance().initialize(...)` 之后调用 `GameHotUpdate.install(context, "https://cocos-game-modules.pages.dev/android/catalog.json")`；首次打开游戏时下载模块（约 2 MB），新版本在后台下载、下次打开生效。本 Demo 见 `MainActivity.initializeGameSdk()`。
 
 宿主客户端必须提供：
 
@@ -30,13 +31,13 @@ SDK 不负责生产登录，也不内置固定 UID、Token 或 Scene ID。未登
 从 SDK 仓库下载：
 
 ```text
-repository/com/eath/cocosgamesdk/game-sdk/0.6.0/game-sdk-0.6.0.aar
+repository/com/eath/cocosgamesdk/game-sdk/0.7.0/game-sdk-0.7.0.aar
 ```
 
 复制到宿主：
 
 ```text
-app/libs/game-sdk-0.6.0.aar
+app/libs/game-sdk-0.7.0.aar
 ```
 
 ### 2.2 Groovy 配置
@@ -68,7 +69,7 @@ android {
 }
 
 dependencies {
-    implementation files("libs/game-sdk-0.6.0.aar")
+    implementation files("libs/game-sdk-0.7.0.aar")
 }
 ```
 
@@ -101,7 +102,7 @@ android {
 }
 
 dependencies {
-    implementation(files("libs/game-sdk-0.6.0.aar"))
+    implementation(files("libs/game-sdk-0.7.0.aar"))
 }
 ```
 
@@ -130,7 +131,7 @@ dependencyResolutionManagement {
 
 ```groovy
 dependencies {
-    implementation "com.eath.cocosgamesdk:game-sdk:0.6.0"
+    implementation "com.eath.cocosgamesdk:game-sdk:0.7.0"
 }
 ```
 
@@ -155,7 +156,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("com.eath.cocosgamesdk:game-sdk:0.6.0")
+    implementation("com.eath.cocosgamesdk:game-sdk:0.7.0")
 }
 ```
 
