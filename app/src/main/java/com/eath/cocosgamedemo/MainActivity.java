@@ -20,6 +20,8 @@ import com.eath.cocosgamesdk.CocosGameSDK;
 import com.eath.cocosgamesdk.GameEvents;
 import com.eath.cocosgamesdk.GameHostListener;
 import com.eath.cocosgamesdk.GameSessionConfig;
+import com.eath.cocosgamesdk.hotupdate.GameHotUpdate;
+import com.eath.cocosgamesdk.hotupdate.GameUpdateListener;
 
 import org.json.JSONException;
 
@@ -52,9 +54,26 @@ public final class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CocosGameSDK.getInstance().initialize(this);
+        initializeGameSdk();
         CocosGameSDK.getInstance().setBottomContentProvider(new DemoBottomContentProvider());
         setContentView(createContentView());
+    }
+
+    /** 初始化 SDK 并开启游戏模块热更新：首次打开游戏时下载模块，新版本在后台下载、下次打开生效。 */
+    private void initializeGameSdk() {
+        CocosGameSDK.getInstance().initialize(this);
+        GameHotUpdate hotUpdate = GameHotUpdate.install(this, BuildConfig.MODULE_CATALOG_URL);
+        hotUpdate.setUpdateListener(new GameUpdateListener() {
+            @Override
+            public void onUpdateProgress(String gameId, String state, long receivedBytes, long totalBytes) {
+                Log.i(LOG_TAG, "模块更新 " + gameId + " " + state + " " + receivedBytes + "/" + totalBytes);
+            }
+
+            @Override
+            public void onUpdateFailed(String gameId, int code, String message) {
+                Log.w(LOG_TAG, "模块更新失败 " + gameId + " code=" + code + " " + message);
+            }
+        });
     }
 
     /** 创建 UID、Token 和场景输入页面。 */
