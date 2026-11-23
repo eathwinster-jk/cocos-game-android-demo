@@ -10,7 +10,7 @@
 - `minSdkVersion`：26
 - `targetSdkVersion`：34
 - Java：JDK 17 构建，Java 8 代码兼容
-- 游戏模块热更新：0.7.0 起 SDK 不再内置游戏，必须同时依赖 `com.eath.cocosgamesdk:game-sdk-hotupdate:0.7.0`，并在 `CocosGameSDK.getInstance().initialize(...)` 之后调用 `GameHotUpdate.install(context, "https://cocos-game-modules.pages.dev/android/catalog.json")`；首次打开游戏时下载模块（约 2 MB），新版本在后台下载、下次打开生效。本 Demo 见 `MainActivity.initializeGameSdk()`。
+- 游戏模块热更新：0.7.0 起 SDK 不再内置游戏，必须同时依赖 `com.eath.cocosgamesdk:game-sdk-hotupdate:0.7.0`，并在 `CocosGameSDK.getInstance().initialize(...)` 之后调用 `GameHotUpdate.install(context, "https://cocos-game-modules.pages.dev/android/catalog.json", catalogPublicKey)`，清单签名公钥 `catalogPublicKey` 为 `MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAErTdV8F92qHswr8ysK3qdPAlCSlOGceiYNZu02CJbHkGYFCbrUg/+TNJDPQNt+nSyS6oM9KIkh7o3+t2DcsyQuA==`（校验清单未被篡改，不通过时回调错误码 7 且不安装）；建议安装后调用 `preload("niuniu")` 预下载，用户进入游戏时无需等待；首次打开游戏时下载模块（约 2 MB），新版本在后台下载、下次打开生效。本 Demo 见 `MainActivity.initializeGameSdk()`。
 
 宿主客户端必须提供：
 

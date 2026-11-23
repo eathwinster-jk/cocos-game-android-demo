@@ -23,6 +23,8 @@ android {
         buildConfigField("String", "LOGIN_COUNTRY_CODE", "\"86\"")
         // 游戏模块热更新版本清单地址（0.7.0 起 SDK 不内置游戏，必须配置）
         buildConfigField("String", "MODULE_CATALOG_URL", "\"https://cocos-game-modules.pages.dev/android/catalog.json\"")
+        // 版本清单签名公钥（EC P-256，X.509 DER 的 Base64），SDK 用它校验清单未被篡改
+        buildConfigField("String", "MODULE_CATALOG_PUBLIC_KEY", "\"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAErTdV8F92qHswr8ysK3qdPAlCSlOGceiYNZu02CJbHkGYFCbrUg/+TNJDPQNt+nSyS6oM9KIkh7o3+t2DcsyQuA==\"")
     }
 
     buildFeatures {

@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 public final class MainActivity extends Activity {
     private static final String LOG_TAG = "GameSdkConsumerDemo";
+    private static final String PRELOAD_GAME_ID = "niuniu";
     private final AccountLoginClient accountLoginClient = new AccountLoginClient();
     private final ThreadPoolExecutor networkExecutor = new ThreadPoolExecutor(
         1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
@@ -59,10 +60,11 @@ public final class MainActivity extends Activity {
         setContentView(createContentView());
     }
 
-    /** 初始化 SDK 并开启游戏模块热更新：首次打开游戏时下载模块，新版本在后台下载、下次打开生效。 */
+    /** 初始化 SDK 并开启游戏模块热更新（校验清单签名），提前预下载游戏模块；新版本在后台下载、下次打开生效。 */
     private void initializeGameSdk() {
         CocosGameSDK.getInstance().initialize(this);
-        GameHotUpdate hotUpdate = GameHotUpdate.install(this, BuildConfig.MODULE_CATALOG_URL);
+        GameHotUpdate hotUpdate = GameHotUpdate.install(this, BuildConfig.MODULE_CATALOG_URL,
+            BuildConfig.MODULE_CATALOG_PUBLIC_KEY);
         hotUpdate.setUpdateListener(new GameUpdateListener() {
             @Override
             public void onUpdateProgress(String gameId, String state, long receivedBytes, long totalBytes) {
@@ -74,6 +76,7 @@ public final class MainActivity extends Activity {
                 Log.w(LOG_TAG, "模块更新失败 " + gameId + " code=" + code + " " + message);
             }
         });
+        hotUpdate.preload(PRELOAD_GAME_ID);
     }
 
     /** 创建 UID、Token 和场景输入页面。 */
