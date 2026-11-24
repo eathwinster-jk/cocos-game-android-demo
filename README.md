@@ -2,7 +2,7 @@
 
 ## 1. SDK 信息
 
-- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.7.0`
+- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.7.1`
 - SDK 仓库：https://github.com/eathwinster-jk/cocos-game-android-sdk
 - 当前模块：`niuniu`
 - ABI：`arm64-v8a`
@@ -10,7 +10,7 @@
 - `minSdkVersion`：26
 - `targetSdkVersion`：34
 - Java：JDK 17 构建，Java 8 代码兼容
-- 游戏模块热更新：0.7.0 起 SDK 不再内置游戏，必须同时依赖 `com.eath.cocosgamesdk:game-sdk-hotupdate:0.7.0`，并在 `CocosGameSDK.getInstance().initialize(...)` 之后调用 `GameHotUpdate.install(context, "https://cocos-game-modules.pages.dev/android/catalog.json", catalogPublicKey)`，清单签名公钥 `catalogPublicKey` 为 `MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAErTdV8F92qHswr8ysK3qdPAlCSlOGceiYNZu02CJbHkGYFCbrUg/+TNJDPQNt+nSyS6oM9KIkh7o3+t2DcsyQuA==`（校验清单未被篡改，不通过时回调错误码 7 且不安装）；建议安装后调用 `preload("niuniu")` 预下载，用户进入游戏时无需等待；首次打开游戏时下载模块（约 2 MB），新版本在后台下载、下次打开生效。本 Demo 见 `MainActivity.initializeGameSdk()`。
+- 游戏模块热更新：0.7.0 起 SDK 不再内置游戏，必须同时依赖 `com.eath.cocosgamesdk:game-sdk-hotupdate:0.7.1`，并在 `CocosGameSDK.getInstance().initialize(...)` 之后调用 `GameHotUpdate.install(context, "https://cocos-game-modules.pages.dev/android/catalog.json", catalogPublicKey)`，清单签名公钥 `catalogPublicKey` 为 `MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAErTdV8F92qHswr8ysK3qdPAlCSlOGceiYNZu02CJbHkGYFCbrUg/+TNJDPQNt+nSyS6oM9KIkh7o3+t2DcsyQuA==`（校验清单未被篡改，不通过时回调错误码 7 且不安装）；建议安装后调用 `preload("niuniu")` 预下载，用户进入游戏时无需等待；首次打开游戏时下载模块（约 2 MB），新版本在后台下载、下次打开生效。本 Demo 见 `MainActivity.initializeGameSdk()`。
 
 宿主客户端必须提供：
 
@@ -31,13 +31,13 @@ SDK 不负责生产登录，也不内置固定 UID、Token 或 Scene ID。未登
 从 SDK 仓库下载：
 
 ```text
-repository/com/eath/cocosgamesdk/game-sdk/0.7.0/game-sdk-0.7.0.aar
+repository/com/eath/cocosgamesdk/game-sdk/0.7.1/game-sdk-0.7.1.aar
 ```
 
 复制到宿主：
 
 ```text
-app/libs/game-sdk-0.7.0.aar
+app/libs/game-sdk-0.7.1.aar
 ```
 
 ### 2.2 Groovy 配置
@@ -69,7 +69,7 @@ android {
 }
 
 dependencies {
-    implementation files("libs/game-sdk-0.7.0.aar")
+    implementation files("libs/game-sdk-0.7.1.aar")
 }
 ```
 
@@ -102,7 +102,7 @@ android {
 }
 
 dependencies {
-    implementation(files("libs/game-sdk-0.7.0.aar"))
+    implementation(files("libs/game-sdk-0.7.1.aar"))
 }
 ```
 
@@ -131,7 +131,7 @@ dependencyResolutionManagement {
 
 ```groovy
 dependencies {
-    implementation "com.eath.cocosgamesdk:game-sdk:0.7.0"
+    implementation "com.eath.cocosgamesdk:game-sdk:0.7.1"
 }
 ```
 
@@ -156,7 +156,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("com.eath.cocosgamesdk:game-sdk:0.7.0")
+    implementation("com.eath.cocosgamesdk:game-sdk:0.7.1")
 }
 ```
 
@@ -511,20 +511,21 @@ CocosGameSDK.getInstance().setHostListener(object : GameHostListener {
 
 - 宿主 Activity 须在 Manifest 声明 `android:configChanges="orientation|keyboardHidden|screenSize|screenLayout|smallestScreenSize"`，否则横屏全屏会重建页面，SDK 会拒绝全屏并打印错误日志。
 - 宿主 `onBackPressed` 须先调用 `CocosGameSDK.getInstance().onBackPressed()`：全屏时退回竖屏，竖屏时与牌桌返回按钮一样回调 `onBackClicked`，返回 false 再走宿主自己的返回。
-- 返回（0.6.0）：竖屏点击牌桌返回箭头、迷你条退出或系统返回键时回调 `onBackClicked(gameId, info)`，SDK 不会自行退出。`GameBackInfo` 带 `isPlaying()`（是否在座）、`canLeave()`、`isInGame()`（在座且本局未结束，不能离座）、`hasBet()`、`isGuest()`、`isMiniMode()`、`getRoundId()`、`getStage()`、`getCountdownSeconds()` 等。宿主调用 `exitGame()` 在座时先离座再关闭，或 `closeGame()` 保留座位直接关闭，两者关闭后都回调 `onGameClosed`；`isInGame()` 为 true 时 `exitGame()` 只在游戏内提示不关闭，需要离开请用 `closeGame()`。
+- 返回（0.6.0）：竖屏点击牌桌返回箭头或系统返回键时回调 `onBackClicked(gameId, info)`，SDK 不会自行退出（0.7.1 起迷你条离座图标改为先展开再由游戏确认离座，不再回调）。`GameBackInfo` 带 `isPlaying()`（是否在座）、`canLeave()`、`isInGame()`（在座且本局未结束，不能离座）、`hasBet()`、`isGuest()`、`isMiniMode()`、`getRoundId()`、`getStage()`、`getCountdownSeconds()` 等。宿主调用 `exitGame()` 在座时先离座再关闭，或 `closeGame()` 保留座位直接关闭，两者关闭后都回调 `onGameClosed`；`isInGame()` 为 true 时 `exitGame()` 只在游戏内提示不关闭，需要离开请用 `closeGame()`。
 - 按钮显隐（0.6.0）：`setBackButtonVisible(boolean)` 控制牌桌返回按钮（默认显示）；`setCollapseButtonVisible(boolean)` 控制竖屏收起按钮（默认隐藏），玩家点击后进入迷你条并回调 `onMiniModeChanged`。
 - 横屏全屏：`toggleFullscreen()`，牌桌移到窗口顶层铺满并把页面转为横屏，退出时放回容器并恢复原方向。
 - 迷你条：在 `onMiniModeChanged` 中把容器调整为 362:50（或恢复 375:211）。
 - `closeGame()` 释放牌桌并移出容器；宿主页面销毁时 SDK 自动释放。同一时间只能打开一个牌桌。
 - 钱包余额变化通过 `onGameEvent` 发送 `wallet.balance_changed`，载荷 `{"balanceCent":995420}`。
+- 竖屏提示（0.7.1）：游戏内不再弹竖屏提示，全部通过 `onGameEvent` 发送 `GameEvents.GAME_TOAST`（`game.toast`），载荷 `{"message":"…","level":"error|info|success"}`，由宿主展示；全屏横屏仍由游戏内展示。`setGameToastVisible` 已废弃。示例见 `DemoEmbedActivity.showGameToast`。
 
 | `GameHostListener` 回调 | 说明 |
 | --- | --- |
-| `onGameEvent` | 通用事件，含钱包余额变化 |
+| `onGameEvent` | 通用事件，含钱包余额变化、竖屏提示 |
 | `onMiniModeChanged` | 迷你条变化，宿主调整容器高度 |
 | `onFullscreenChanged` | 横屏全屏变化 |
 | `onPlayingStateChanged` | 是否在座参与本局 |
-| `onBackClicked` | 竖屏点击返回（含迷你条退出、系统返回键），宿主据 `GameBackInfo` 决定 `exitGame` 或 `closeGame`；0.6.0 起取代已废弃的 `onBackRequested` |
+| `onBackClicked` | 竖屏点击返回（含系统返回键），宿主据 `GameBackInfo` 决定 `exitGame` 或 `closeGame`；0.6.0 起取代已废弃的 `onBackRequested` |
 | `onSessionInvalid` | 会话失效，SDK 随后关闭牌桌 |
 | `onGameClosed` | 牌桌已关闭并移出容器 |
 
@@ -594,16 +595,16 @@ override fun onBackPressed() {
 
 ## 15. 竖屏界面由宿主实现
 
-竖屏下的下注、记录与规则、退出确认都可以由宿主自绘；注册对应监听后竖屏 SDK 不再展示这些界面，全屏仍由 SDK 展示。未注册的监听仍使用 SDK 自带界面。
+竖屏下的下注、记录与规则可以由宿主自绘；注册对应监听后竖屏 SDK 不再展示这些界面，全屏仍由 SDK 展示。未注册时竖屏使用游戏随热更新下发的自绘弹窗（下注抽屉需 0.7.1 起）。
+
+离座确认（0.7.1）：竖屏由 SDK 展示热更新自绘弹窗，全屏与迷你条由游戏内确认，确认后只离座转观战；`setExitListener` / `GameExitListener` 已废弃，不再回调。
 
 | 界面 | 监听 | 宿主调用 |
 | --- | --- | --- |
 | 下注 | `setBetListener(GameBetListener)`：`onBetOptions`（注区、筹码、截止时间）、`onBetClosed`、`onBetResult` | `submitBet(roundId, areaCode, amountCent, clientBetNo)` |
 | 记录与规则 | `setRecordsListener(GameRecordsListener)`：`onShowRecords`、`onRecordsUpdated` | `queryRecords(isHistory, filterKey, periodIndex, keyword)`、`loadMoreRecords(isHistory)` |
-| 退出确认 | `setExitListener(GameExitListener)`：`onExitRequested` | `GameExitDecision.leave()` / `stay()` |
 
 - `submitBet` 须在主线程调用；`clientBetNo` 为幂等号（不超过 64 个字符，可用 `CocosGameSDK.createClientBetNo()` 生成），同一幂等号在结果返回前或成功后再次提交会被忽略，失败后可用原幂等号重试。
-- 退出确认必须调用 `leave()` 或 `stay()` 之一；游戏只允许在两局之间离座。
 - 示例见 `DemoHostBetPanel`、`DemoHostRecordsSheet` 与 `DemoBottomContentProvider`。
 
 ### 15.1 Java
@@ -626,14 +627,6 @@ CocosGameSDK.getInstance().setBetListener(new GameBetListener() {
     }
 });
 CocosGameSDK.getInstance().submitBet(roundId, areaCode, amountCent, CocosGameSDK.createClientBetNo());
-
-CocosGameSDK.getInstance().setExitListener((gameId, decision) ->
-    new AlertDialog.Builder(activity)
-        .setTitle("确认离开牌桌？")
-        .setPositiveButton("离开", (dialog, which) -> decision.leave())
-        .setNegativeButton("继续游戏", (dialog, which) -> decision.stay())
-        .setOnDismissListener(dialog -> decision.stay())
-        .show());
 ```
 
 ### 15.2 Kotlin
@@ -653,15 +646,6 @@ CocosGameSDK.getInstance().setBetListener(object : GameBetListener {
     }
 })
 CocosGameSDK.getInstance().submitBet(roundId, areaCode, amountCent, CocosGameSDK.createClientBetNo())
-
-CocosGameSDK.getInstance().setExitListener { _, decision ->
-    AlertDialog.Builder(activity)
-        .setTitle("确认离开牌桌？")
-        .setPositiveButton("离开") { _, _ -> decision.leave() }
-        .setNegativeButton("继续游戏") { _, _ -> decision.stay() }
-        .setOnDismissListener { decision.stay() }
-        .show()
-}
 ```
 
 ## 16. 游客观战（直播间与群聊）
