@@ -140,6 +140,10 @@ public final class DemoEmbedActivity extends Activity implements GameHostListene
             handleLoginRequired(payloadJson);
             return;
         }
+        if (GameEvents.GAME_TOAST.equals(event)) {
+            showGameToast(payloadJson);
+            return;
+        }
         if (!GameEvents.WALLET_BALANCE_CHANGED.equals(event)) return;
         try {
             long balanceCent = new JSONObject(payloadJson).getLong("balanceCent");
@@ -156,6 +160,18 @@ public final class DemoEmbedActivity extends Activity implements GameHostListene
     private void handleLoginRequired(String payloadJson) {
         Log.i(TAG, "游客需要登录，payload=" + payloadJson);
         Toast.makeText(this, R.string.guest_login_required, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * 竖屏游戏提示由宿主展示：载荷 {"message":"…","level":"error|info|success"}，示例统一用系统 Toast。
+     */
+    private void showGameToast(String payloadJson) {
+        try {
+            String message = new JSONObject(payloadJson).optString("message");
+            if (!message.isEmpty()) Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        } catch (JSONException error) {
+            Log.e(TAG, "解析游戏提示失败，payload=" + payloadJson, error);
+        }
     }
 
     @Override

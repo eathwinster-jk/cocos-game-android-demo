@@ -33,10 +33,6 @@
     <string name="demo_embed_fullscreen">Fullscreen ›</string>
     <string name="demo_embed_close">Close table ›</string>
     <string name="demo_embed_closed">Table closed</string>
-    <string name="demo_exit_title">Leave the table?</string>
-    <string name="demo_exit_message">You will leave your seat. Bets already placed this round are settled as usual.</string>
-    <string name="demo_exit_leave">Leave</string>
-    <string name="demo_exit_stay">Stay</string>
     <string name="embed_mode">Embed table in host page (View)</string>
     <string name="guest_open">Watch as guest (live room)</string>
     <string name="guest_login_required">Please log in to join, view records or watch in fullscreen</string>
