@@ -45,7 +45,7 @@ android {
 
 dependencies {
     val gameSdkVersion = providers.gradleProperty("gameSdkVersion")
-        .orElse("0.7.1")
+        .orElse("0.7.2")
         .get()
     implementation("com.eath.cocosgamesdk:game-sdk:$gameSdkVersion")
     implementation("com.eath.cocosgamesdk:game-sdk-hotupdate:$gameSdkVersion")

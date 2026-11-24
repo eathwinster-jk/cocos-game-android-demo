@@ -2,7 +2,7 @@
 
 ## 1. SDK 信息
 
-- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.7.1`
+- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.7.2`
 - SDK 仓库：https://github.com/eathwinster-jk/cocos-game-android-sdk
 - 当前模块：`niuniu`
 - ABI：`arm64-v8a`
@@ -10,7 +10,7 @@
 - `minSdkVersion`：26
 - `targetSdkVersion`：34
 - Java：JDK 17 构建，Java 8 代码兼容
-- 游戏模块热更新：0.7.0 起 SDK 不再内置游戏，必须同时依赖 `com.eath.cocosgamesdk:game-sdk-hotupdate:0.7.1`，并在 `CocosGameSDK.getInstance().initialize(...)` 之后调用 `GameHotUpdate.install(context, "https://cocos-game-modules.pages.dev/android/catalog.json", catalogPublicKey)`，清单签名公钥 `catalogPublicKey` 为 `MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAErTdV8F92qHswr8ysK3qdPAlCSlOGceiYNZu02CJbHkGYFCbrUg/+TNJDPQNt+nSyS6oM9KIkh7o3+t2DcsyQuA==`（校验清单未被篡改，不通过时回调错误码 7 且不安装）；建议安装后调用 `preload("niuniu")` 预下载，用户进入游戏时无需等待；首次打开游戏时下载模块（约 2 MB），新版本在后台下载、下次打开生效。本 Demo 见 `MainActivity.initializeGameSdk()`。
+- 游戏模块热更新：0.7.0 起 SDK 不再内置游戏，必须同时依赖 `com.eath.cocosgamesdk:game-sdk-hotupdate:0.7.2`，并在 `CocosGameSDK.getInstance().initialize(...)` 之后调用 `GameHotUpdate.install(context, "https://cocos-game-modules.pages.dev/android/catalog.json", catalogPublicKey)`，清单签名公钥 `catalogPublicKey` 为 `MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAErTdV8F92qHswr8ysK3qdPAlCSlOGceiYNZu02CJbHkGYFCbrUg/+TNJDPQNt+nSyS6oM9KIkh7o3+t2DcsyQuA==`（校验清单未被篡改，不通过时回调错误码 7 且不安装）；建议安装后调用 `preload("niuniu")` 预下载，用户进入游戏时无需等待；首次打开游戏时下载模块（约 2 MB），新版本在后台下载、下次打开生效。本 Demo 见 `MainActivity.initializeGameSdk()`。
 
 宿主客户端必须提供：
 
@@ -31,13 +31,13 @@ SDK 不负责生产登录，也不内置固定 UID、Token 或 Scene ID。未登
 从 SDK 仓库下载：
 
 ```text
-repository/com/eath/cocosgamesdk/game-sdk/0.7.1/game-sdk-0.7.1.aar
+repository/com/eath/cocosgamesdk/game-sdk/0.7.2/game-sdk-0.7.2.aar
 ```
 
 复制到宿主：
 
 ```text
-app/libs/game-sdk-0.7.1.aar
+app/libs/game-sdk-0.7.2.aar
 ```
 
 ### 2.2 Groovy 配置
@@ -69,7 +69,7 @@ android {
 }
 
 dependencies {
-    implementation files("libs/game-sdk-0.7.1.aar")
+    implementation files("libs/game-sdk-0.7.2.aar")
 }
 ```
 
@@ -102,7 +102,7 @@ android {
 }
 
 dependencies {
-    implementation(files("libs/game-sdk-0.7.1.aar"))
+    implementation(files("libs/game-sdk-0.7.2.aar"))
 }
 ```
 
@@ -131,7 +131,7 @@ dependencyResolutionManagement {
 
 ```groovy
 dependencies {
-    implementation "com.eath.cocosgamesdk:game-sdk:0.7.1"
+    implementation "com.eath.cocosgamesdk:game-sdk:0.7.2"
 }
 ```
 
@@ -156,7 +156,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("com.eath.cocosgamesdk:game-sdk:0.7.1")
+    implementation("com.eath.cocosgamesdk:game-sdk:0.7.2")
 }
 ```
 
@@ -593,60 +593,11 @@ override fun onBackPressed() {
 }
 ```
 
-## 15. 竖屏界面由宿主实现
+## 15. 竖屏下注与记录（热更新自绘弹窗）
 
-竖屏下的下注、记录与规则可以由宿主自绘；注册对应监听后竖屏 SDK 不再展示这些界面，全屏仍由 SDK 展示。未注册时竖屏使用游戏随热更新下发的自绘弹窗（下注抽屉需 0.7.1 起）。
+0.7.2 起竖屏下注、记录与规则统一由 SDK 展示游戏随热更新下发的自绘弹窗（底部下注抽屉、记录与规则面板），样式与交互随游戏热更新调整，宿主无需任何代码；全屏仍由游戏内弹窗展示。
 
-离座确认（0.7.1）：竖屏由 SDK 展示热更新自绘弹窗，全屏与迷你条由游戏内确认，确认后只离座转观战；`setExitListener` / `GameExitListener` 已废弃，不再回调。
-
-| 界面 | 监听 | 宿主调用 |
-| --- | --- | --- |
-| 下注 | `setBetListener(GameBetListener)`：`onBetOptions`（注区、筹码、截止时间）、`onBetClosed`、`onBetResult` | `submitBet(roundId, areaCode, amountCent, clientBetNo)` |
-| 记录与规则 | `setRecordsListener(GameRecordsListener)`：`onShowRecords`、`onRecordsUpdated` | `queryRecords(isHistory, filterKey, periodIndex, keyword)`、`loadMoreRecords(isHistory)` |
-
-- `submitBet` 须在主线程调用；`clientBetNo` 为幂等号（不超过 64 个字符，可用 `CocosGameSDK.createClientBetNo()` 生成），同一幂等号在结果返回前或成功后再次提交会被忽略，失败后可用原幂等号重试。
-- 本 Demo 未注册这两个监听，竖屏下注、记录与规则均由 SDK 热更新自绘弹窗展示，浮在最上层，不改动宿主界面布局；下注筹码金额以后端配置为准。
-
-### 15.1 Java
-
-```java
-CocosGameSDK.getInstance().setBetListener(new GameBetListener() {
-    @Override
-    public void onBetOptions(String gameId, GameBetOptions options) {
-        // 展示注区、筹码，按 options.getDeadlineMillis() 倒计时
-    }
-
-    @Override
-    public void onBetClosed(String gameId, String roundId) {
-        // 收起下注面板
-    }
-
-    @Override
-    public void onBetResult(String gameId, GameBetResult result) {
-        // result.isSuccess()、result.getBalanceCent()、result.getErrorMessage()
-    }
-});
-CocosGameSDK.getInstance().submitBet(roundId, areaCode, amountCent, CocosGameSDK.createClientBetNo());
-```
-
-### 15.2 Kotlin
-
-```kotlin
-CocosGameSDK.getInstance().setBetListener(object : GameBetListener {
-    override fun onBetOptions(gameId: String, options: GameBetOptions) {
-        // 展示注区、筹码，按 options.deadlineMillis 倒计时
-    }
-
-    override fun onBetClosed(gameId: String, roundId: String) {
-        // 收起下注面板
-    }
-
-    override fun onBetResult(gameId: String, result: GameBetResult) {
-        // result.isSuccess、result.balanceCent、result.errorMessage
-    }
-})
-CocosGameSDK.getInstance().submitBet(roundId, areaCode, amountCent, CocosGameSDK.createClientBetNo())
-```
+`setBetListener` / `GameBetListener`、`setRecordsListener` / `GameRecordsListener`、`submitBet`、`queryRecords`、`loadMoreRecords`、`refreshRecords`、`setBetPanelContainer` 已废弃：监听不再回调，宿主无需调用；已接入的代码仍可编译（有废弃警告），升级后可删除。
 
 ## 16. 游客观战（直播间与群聊）
 
