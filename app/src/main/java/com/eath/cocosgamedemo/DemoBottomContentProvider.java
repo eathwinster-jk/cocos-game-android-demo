@@ -26,24 +26,12 @@ final class DemoBottomContentProvider implements GameBottomContentProvider {
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setPadding(dp(activity, PADDING_HORIZONTAL_DP), dp(activity, PADDING_VERTICAL_DP),
             dp(activity, PADDING_HORIZONTAL_DP), dp(activity, PADDING_VERTICAL_DP));
-        panel.addView(new DemoHostBetPanel(activity));
         panel.addView(createText(activity, R.string.demo_bottom_match, 14, ACCENT_COLOR));
         panel.addView(createText(activity, R.string.demo_bottom_tabs, 17, Color.BLACK));
         panel.addView(createText(activity, R.string.demo_bottom_message_1, 15, Color.DKGRAY));
         panel.addView(createText(activity, R.string.demo_bottom_message_2, 15, Color.DKGRAY));
         panel.addView(createText(activity, R.string.demo_bottom_message_3, 15, ACCENT_COLOR));
         panel.addView(createMiniModeButton(activity));
-        DemoHostRecordsSheet recordsSheet = new DemoHostRecordsSheet(activity);
-        panel.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-            @Override
-            public void onViewAttachedToWindow(View view) {
-            }
-
-            @Override
-            public void onViewDetachedFromWindow(View view) {
-                recordsSheet.release();
-            }
-        });
         return panel;
     }
 

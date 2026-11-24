@@ -605,7 +605,7 @@ override fun onBackPressed() {
 | 记录与规则 | `setRecordsListener(GameRecordsListener)`：`onShowRecords`、`onRecordsUpdated` | `queryRecords(isHistory, filterKey, periodIndex, keyword)`、`loadMoreRecords(isHistory)` |
 
 - `submitBet` 须在主线程调用；`clientBetNo` 为幂等号（不超过 64 个字符，可用 `CocosGameSDK.createClientBetNo()` 生成），同一幂等号在结果返回前或成功后再次提交会被忽略，失败后可用原幂等号重试。
-- 示例见 `DemoHostBetPanel`、`DemoHostRecordsSheet` 与 `DemoBottomContentProvider`。
+- 本 Demo 未注册这两个监听，竖屏下注、记录与规则均由 SDK 热更新自绘弹窗展示，浮在最上层，不改动宿主界面布局；下注筹码金额以后端配置为准。
 
 ### 15.1 Java
 
