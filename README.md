@@ -2,7 +2,7 @@
 
 ## 1. SDK 信息
 
-- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.7.2`
+- Maven 坐标：`com.eath.cocosgamesdk:game-sdk:0.8.0`
 - SDK 仓库：https://github.com/eathwinster-jk/cocos-game-android-sdk
 - 当前模块：`niuniu`
 - ABI：`arm64-v8a`
@@ -10,7 +10,7 @@
 - `minSdkVersion`：26
 - `targetSdkVersion`：34
 - Java：JDK 17 构建，Java 8 代码兼容
-- 游戏模块热更新：0.7.0 起 SDK 不再内置游戏，必须同时依赖 `com.eath.cocosgamesdk:game-sdk-hotupdate:0.7.2`，并在 `CocosGameSDK.getInstance().initialize(...)` 之后调用 `GameHotUpdate.install(context, "https://cocos-game-modules.pages.dev/android/catalog.json", catalogPublicKey)`，清单签名公钥 `catalogPublicKey` 为 `MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAErTdV8F92qHswr8ysK3qdPAlCSlOGceiYNZu02CJbHkGYFCbrUg/+TNJDPQNt+nSyS6oM9KIkh7o3+t2DcsyQuA==`（校验清单未被篡改，不通过时回调错误码 7 且不安装）；建议安装后调用 `preload("niuniu")` 预下载，用户进入游戏时无需等待；首次打开游戏时下载模块（约 2 MB），新版本在后台下载、下次打开生效。本 Demo 见 `MainActivity.initializeGameSdk()`。
+- 游戏模块热更新：0.7.0 起 SDK 不再内置游戏，必须同时依赖 `com.eath.cocosgamesdk:game-sdk-hotupdate:0.8.0`，并在 `CocosGameSDK.getInstance().initialize(...)` 之后调用 `GameHotUpdate.install(context, "https://cocos-game-modules.pages.dev/android/catalog.json", catalogPublicKey)`，清单签名公钥 `catalogPublicKey` 为 `MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAErTdV8F92qHswr8ysK3qdPAlCSlOGceiYNZu02CJbHkGYFCbrUg/+TNJDPQNt+nSyS6oM9KIkh7o3+t2DcsyQuA==`（校验清单未被篡改，不通过时回调错误码 7 且不安装）；建议安装后调用 `preload("niuniu")` 预下载，用户进入游戏时无需等待；首次打开游戏时下载模块（约 2 MB），新版本在后台下载、下次打开生效。本 Demo 见 `MainActivity.initializeGameSdk()`。
 
 宿主客户端必须提供：
 
@@ -31,13 +31,13 @@ SDK 不负责生产登录，也不内置固定 UID、Token 或 Scene ID。未登
 从 SDK 仓库下载：
 
 ```text
-repository/com/eath/cocosgamesdk/game-sdk/0.7.2/game-sdk-0.7.2.aar
+repository/com/eath/cocosgamesdk/game-sdk/0.8.0/game-sdk-0.8.0.aar
 ```
 
 复制到宿主：
 
 ```text
-app/libs/game-sdk-0.7.2.aar
+app/libs/game-sdk-0.8.0.aar
 ```
 
 ### 2.2 Groovy 配置
@@ -69,7 +69,7 @@ android {
 }
 
 dependencies {
-    implementation files("libs/game-sdk-0.7.2.aar")
+    implementation files("libs/game-sdk-0.8.0.aar")
 }
 ```
 
@@ -102,7 +102,7 @@ android {
 }
 
 dependencies {
-    implementation(files("libs/game-sdk-0.7.2.aar"))
+    implementation(files("libs/game-sdk-0.8.0.aar"))
 }
 ```
 
@@ -131,7 +131,7 @@ dependencyResolutionManagement {
 
 ```groovy
 dependencies {
-    implementation "com.eath.cocosgamesdk:game-sdk:0.7.2"
+    implementation "com.eath.cocosgamesdk:game-sdk:0.8.0"
 }
 ```
 
@@ -156,7 +156,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("com.eath.cocosgamesdk:game-sdk:0.7.2")
+    implementation("com.eath.cocosgamesdk:game-sdk:0.8.0")
 }
 ```
 
@@ -517,7 +517,8 @@ CocosGameSDK.getInstance().setHostListener(object : GameHostListener {
 - 迷你条：在 `onMiniModeChanged` 中把容器调整为 362:50（或恢复 375:211）。
 - `closeGame()` 释放牌桌并移出容器；宿主页面销毁时 SDK 自动释放。同一时间只能打开一个牌桌。
 - 钱包余额变化通过 `onGameEvent` 发送 `wallet.balance_changed`，载荷 `{"balanceCent":995420}`。
-- 竖屏提示（0.7.1）：游戏内不再弹竖屏提示，全部通过 `onGameEvent` 发送 `GameEvents.GAME_TOAST`（`game.toast`），载荷 `{"message":"…","level":"error|info|success"}`，由宿主展示；全屏横屏仍由游戏内展示。`setGameToastVisible` 已废弃。示例见 `DemoEmbedActivity.showGameToast`。
+- 竖屏提示（0.8.0）：竖屏提示由 SDK 直接展示游戏随热更新下发的自绘提示（屏幕居中、黑色半透明，2 秒后自动消失），游戏不再发送 `GameEvents.GAME_TOAST`，宿主无需处理；全屏横屏仍由游戏内展示。`DemoEmbedActivity.showGameToast` 只在搭配 0.8.0 之前的 SDK 时生效。`setGameToastVisible` 已废弃。
+- 通用热更新弹窗（0.8.0）：游戏可以打开任意热更新自绘弹窗并与之通信，之后新增弹窗种类、调整交互或提示只需游戏热更新，宿主无需改动。
 
 | `GameHostListener` 回调 | 说明 |
 | --- | --- |
